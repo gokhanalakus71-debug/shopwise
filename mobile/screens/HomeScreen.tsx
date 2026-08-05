@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from "react-native";
 
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
+import ReviewProductCard from "../components/ReviewProductCard";
 
 export default function HomeScreen() {
   return (
@@ -34,7 +35,11 @@ export default function HomeScreen() {
         <View style={styles.chipContainer}>
           <SelectionChip title="Pregnancy" />
           <SelectionChip title="Gluten Intolerance" />
-          <SelectionChip title="+ Add" />
+          <SelectionChip title="+ Add consideration" />
+        </View>
+
+        <View style={styles.reviewCard}>
+          <ReviewProductCard />
         </View>
 
       </View>
@@ -86,5 +91,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: Spacing.md,
+  },
+
+  reviewCard: {
+    marginTop: Spacing.lg,
   },
 });
