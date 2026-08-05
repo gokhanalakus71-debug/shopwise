@@ -3,18 +3,20 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colors, Spacing, Typography } from "../theme";
 import AppTextInput from "../components/AppTextInput";
+import PasswordInput from "../components/PasswordInput";
 import PrimaryButton from "../components/PrimaryButton";
 
 export default function LoginScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
+
         <Text style={styles.logo}>🛍️</Text>
 
         <Text style={styles.title}>Welcome Back</Text>
 
         <Text style={styles.subtitle}>
-          Sign in to continue using ShopWise
+          Sign in to continue
         </Text>
 
         <AppTextInput
@@ -24,17 +26,21 @@ export default function LoginScreen() {
           autoCapitalize="none"
         />
 
-        <AppTextInput
+        <PasswordInput
           label="Password"
           placeholder="Enter your password"
-          secureTextEntry
         />
 
         <PrimaryButton title="Login" />
 
-        <Text style={styles.forgotPassword}>
+        <Text style={styles.link}>
           Forgot Password?
         </Text>
+
+        <Text style={styles.link}>
+          Create Account
+        </Text>
+
       </View>
     </SafeAreaView>
   );
@@ -56,20 +62,20 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   title: {
+    textAlign: "center",
     fontSize: Typography.heading,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
-    textAlign: "center",
   },
   subtitle: {
+    textAlign: "center",
     marginTop: Spacing.sm,
     marginBottom: Spacing.xl,
     fontSize: Typography.body,
     color: Colors.textSecondary,
-    textAlign: "center",
   },
-  forgotPassword: {
-    marginTop: Spacing.lg,
+  link: {
+    marginTop: Spacing.md,
     textAlign: "center",
     color: Colors.primary,
     fontSize: Typography.caption,
