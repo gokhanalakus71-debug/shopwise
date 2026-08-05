@@ -5,8 +5,12 @@ import { Colors, Spacing, Typography } from "../theme";
 import AppTextInput from "../components/AppTextInput";
 import PasswordInput from "../components/PasswordInput";
 import PrimaryButton from "../components/PrimaryButton";
+import { useNavigation } from "@react-navigation/native";
+import { AppNavigation } from "../navigation/AppNavigator";
 
 export default function LoginScreen() {
+  const navigation = useNavigation<AppNavigation>();
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -31,7 +35,10 @@ export default function LoginScreen() {
           placeholder="Enter your password"
         />
 
-        <PrimaryButton title="Login" />
+        <PrimaryButton
+          title="Login"
+          onPress={() => navigation.navigate("Home")}
+        />
 
         <Text style={styles.link}>
           Forgot Password?
