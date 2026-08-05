@@ -1,12 +1,16 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
 import BottomNavigation from "../components/BottomNavigation";
+import { AppNavigation } from "../navigation/AppNavigator";
 
 export default function HomeScreen() {
+  const navigation = useNavigation<AppNavigation>();
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -43,7 +47,9 @@ export default function HomeScreen() {
         </View>
 
         <View style={styles.reviewCard}>
-          <ReviewProductCard />
+          <ReviewProductCard
+            onPress={() => navigation.navigate("ReviewProduct")}
+          />
         </View>
 
         <Text style={styles.sectionTitle}>
