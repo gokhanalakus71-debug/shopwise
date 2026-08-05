@@ -1,30 +1,41 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Text, View, Alert } from "react-native";
-import { useCameraPermissions } from "expo-camera";
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useState } from "react";
 
 import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
 
 export default function ReviewProductScreen() {
-  const [permission, requestPermission] = useCameraPermissions();
+  const [imageUri, setImageUri] = useState<string | null>(null);
 
-  async function handleOpenCamera() {
-    if (!permission?.granted) {
-      const result = await requestPermission();
+  async function handleTakePhoto() {
+    const permission =
+      await ImagePicker.requestCameraPermissionsAsync();
 
-      if (!result.granted) {
-        Alert.alert(
-          "Camera Permission",
-          "ShopWise needs camera access to review product ingredients."
-        );
-        return;
-      }
+    if (!permission.granted) {
+      Alert.alert(
+        "Camera Permission",
+        "ShopWise needs camera access to review product ingredients."
+      );
+      return;
     }
 
-    Alert.alert(
-      "Coming Next",
-      "Camera integration is the next step."
-    );
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);
+    }
   }
 
   return (
@@ -37,9 +48,16 @@ export default function ReviewProductScreen() {
         </Text>
 
         <PrimaryButton
-          title="Open Camera"
-          onPress={handleOpenCamera}
+          title="Take Photo"
+          onPress={handleTakePhoto}
         />
+
+        {imageUri && (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.preview}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
@@ -70,5 +88,12 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: Typography.body,
     color: Colors.textSecondary,
+  },
+
+  preview: {
+    marginTop: Spacing.xl,
+    width: 250,
+    height: 350,
+    borderRadius: 12,
   },
 });
