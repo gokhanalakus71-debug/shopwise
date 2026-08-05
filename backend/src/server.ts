@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
+import reviewRouter from "./routes/review.js";
+
 dotenv.config();
 
 const app = express();
@@ -12,10 +14,11 @@ app.use(express.json());
 app.get("/", (_, res) => {
   res.json({
     application: "ShopWise API",
-    version: "1.0.0",
-    status: "Running",
+    status: "Running"
   });
 });
+
+app.use("/review", reviewRouter);
 
 const PORT = Number(process.env.PORT) || 3000;
 
