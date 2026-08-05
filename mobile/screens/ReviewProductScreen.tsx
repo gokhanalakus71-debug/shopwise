@@ -11,6 +11,7 @@ import { useState } from "react";
 
 import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
+import ReviewService from "../services/ReviewService";
 
 export default function ReviewProductScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -33,8 +34,26 @@ export default function ReviewProductScreen() {
       quality: 1,
     });
 
-    if (!result.canceled) {
-      setImageUri(result.assets[0].uri);
+    if (result.canceled) return;
+
+    setImageUri(result.assets[0].uri);
+
+    try {
+      const review = await ReviewService.review({
+        ingredients: "Water, Glycerin",
+        people: ["Me"],
+        healthConsiderations: ["Pregnancy"],
+      });
+
+      Alert.alert(
+        review.verdict,
+        review.summary.join("\n")
+      );
+    } catch (error) {
+      Alert.alert(
+        "Connection Error",
+        "Unable to reach ShopWise backend."
+      );
     }
   }
 
