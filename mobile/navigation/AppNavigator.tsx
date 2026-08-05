@@ -7,11 +7,13 @@ import {
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
+import ReviewProductScreen from "../screens/ReviewProductScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
   Login: undefined;
   Home: undefined;
+  ReviewProduct: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -19,18 +21,23 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-          <Stack.Navigator
-            initialRouteName="Login"
-            screenOptions={{
-              headerShown: false,
-            }}
-          >
-            <Stack.Screen name="Welcome" component={WelcomeScreen} />
-            <Stack.Screen name="Login" component={LoginScreen} />
-            <Stack.Screen name="Home" component={HomeScreen} />
-          </Stack.Navigator>
+      <Stack.Navigator
+        initialRouteName="Login"
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Stack.Screen name="Welcome" component={WelcomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen
+          name="ReviewProduct"
+          component={ReviewProductScreen}
+        />
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
 
-export type AppNavigation = NativeStackNavigationProp<RootStackParamList>;
+export type AppNavigation =
+  NativeStackNavigationProp<RootStackParamList>;
