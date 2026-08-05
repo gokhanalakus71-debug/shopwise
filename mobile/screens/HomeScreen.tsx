@@ -1,19 +1,23 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, View } from "react-native";
 
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
+import BottomNavigation from "../components/BottomNavigation";
 
 export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.content}
+        showsVerticalScrollIndicator={false}
+      >
+        <Text style={styles.brand}>ShopWise</Text>
 
-        <Text style={styles.welcome}>Welcome to ShopWise</Text>
-
-        <Text style={styles.title}>
-          Ready to review a product?
+        <Text style={styles.subtitle}>
+          Your AI shopping assistant
         </Text>
 
         <Text style={styles.sectionTitle}>
@@ -42,7 +46,16 @@ export default function HomeScreen() {
           <ReviewProductCard />
         </View>
 
-      </View>
+        <Text style={styles.sectionTitle}>
+          Recently Reviewed
+        </Text>
+
+        <Text style={styles.review}>🟢 Dove Shampoo</Text>
+        <Text style={styles.review}>🟡 Nutella</Text>
+        <Text style={styles.review}>🔴 Kinder Chocolate</Text>
+      </ScrollView>
+
+      <BottomNavigation />
     </SafeAreaView>
   );
 }
@@ -53,26 +66,31 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
 
-  content: {
+  scrollView: {
     flex: 1,
+  },
+
+  content: {
     padding: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
 
-  welcome: {
+  brand: {
     marginTop: Spacing.lg,
-    fontSize: Typography.body,
-    color: Colors.textSecondary,
-  },
-
-  title: {
-    marginTop: Spacing.sm,
-    fontSize: Typography.heading,
+    fontSize: Typography.title,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
   },
 
+  subtitle: {
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xl,
+    fontSize: Typography.body,
+    color: Colors.textSecondary,
+  },
+
   sectionTitle: {
-    marginTop: Spacing.xl,
+    marginTop: Spacing.lg,
     marginBottom: Spacing.md,
     fontSize: Typography.body,
     fontWeight: Typography.weightBold,
@@ -80,7 +98,6 @@ const styles = StyleSheet.create({
   },
 
   groupTitle: {
-    marginTop: Spacing.md,
     marginBottom: Spacing.sm,
     fontSize: Typography.caption,
     fontWeight: Typography.weightBold,
@@ -90,10 +107,16 @@ const styles = StyleSheet.create({
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
 
   reviewCard: {
-    marginTop: Spacing.lg,
+    marginVertical: Spacing.lg,
+  },
+
+  review: {
+    marginBottom: Spacing.sm,
+    fontSize: Typography.body,
+    color: Colors.textPrimary,
   },
 });
