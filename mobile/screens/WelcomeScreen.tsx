@@ -5,6 +5,8 @@ import PrimaryButton from "../components/PrimaryButton";
 export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
+      <Text style={styles.logo}>🛍️</Text>
+
       <Text style={styles.title}>ShopWise</Text>
 
       <Text style={styles.subtitle}>
@@ -25,6 +27,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: Spacing.lg,
+  },
+  logo: {
+    fontSize: 72,
+    marginBottom: Spacing.md,
   },
   title: {
     fontSize: Typography.title,
