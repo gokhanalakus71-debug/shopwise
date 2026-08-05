@@ -1,7 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
-import { StyleSheet, Text, View, Pressable } from "react-native";
+import { StyleSheet, Text, View } from "react-native";
 
-import { Colors, Radius, Spacing, Typography } from "../theme";
+import { Colors, Spacing, Typography } from "../theme";
+import SelectionChip from "../components/SelectionChip";
 
 export default function HomeScreen() {
   return (
@@ -18,20 +19,22 @@ export default function HomeScreen() {
           Review this product for
         </Text>
 
-        <View style={styles.profileContainer}>
+        <Text style={styles.groupTitle}>People</Text>
 
-          <Pressable style={styles.selectedChip}>
-            <Text style={styles.selectedChipText}>✓ Me</Text>
-          </Pressable>
+        <View style={styles.chipContainer}>
+          <SelectionChip title="Me" selected />
+          <SelectionChip title="Child 1" />
+          <SelectionChip title="Husband" />
+        </View>
 
-          <Pressable style={styles.chip}>
-            <Text style={styles.chipText}>Child 1</Text>
-          </Pressable>
+        <Text style={styles.groupTitle}>
+          Health considerations
+        </Text>
 
-          <Pressable style={styles.chip}>
-            <Text style={styles.chipText}>Pregnancy</Text>
-          </Pressable>
-
+        <View style={styles.chipContainer}>
+          <SelectionChip title="Pregnancy" />
+          <SelectionChip title="Gluten Intolerance" />
+          <SelectionChip title="+ Add" />
         </View>
 
       </View>
@@ -71,35 +74,17 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
   },
 
-  profileContainer: {
+  groupTitle: {
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+    fontSize: Typography.caption,
+    fontWeight: Typography.weightBold,
+    color: Colors.textSecondary,
+  },
+
+  chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    gap: 12,
-  },
-
-  selectedChip: {
-    backgroundColor: Colors.primary,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: Radius.round,
-  },
-
-  chip: {
-    backgroundColor: "#FFFFFF",
-    borderWidth: 1,
-    borderColor: Colors.border,
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: Radius.round,
-  },
-
-  selectedChipText: {
-    color: "#FFFFFF",
-    fontWeight: Typography.weightBold,
-  },
-
-  chipText: {
-    color: Colors.textPrimary,
-    fontWeight: Typography.weightMedium,
+    marginBottom: Spacing.md,
   },
 });
