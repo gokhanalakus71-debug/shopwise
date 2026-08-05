@@ -1,20 +1,23 @@
 import { ReviewRequest } from "../models/ReviewRequest.js";
 import { ReviewResponse } from "../models/ReviewResponse.js";
 
+import OpenAIService from "./OpenAIService.js";
+import { buildProductReviewPrompt } from "../prompts/ProductReviewPrompt.js";
+
 class ReviewService {
   async review(
     request: ReviewRequest
   ): Promise<ReviewResponse> {
-    console.log("Reviewing product...");
-    console.log(request);
 
-    return {
-      verdict: "RECOMMENDED",
-      summary: [
-        "No high-risk ingredients detected",
-        "Suitable for selected profile",
-      ],
-    };
+    const prompt = buildProductReviewPrompt(
+      request.ingredients,
+      request.people,
+      request.healthConsiderations
+    );
+
+    const response = await OpenAIService.review(prompt);
+
+    return JSON.parse(response) as ReviewResponse;
   }
 }
 
