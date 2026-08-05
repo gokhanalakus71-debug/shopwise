@@ -1,8 +1,8 @@
 import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { Colors, Typography } from "../theme";
+import { Colors, Radius, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
 
-export default function SplashScreen() {
+export default function WelcomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.title}>ShopWise</Text>
@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 24,
+    paddingHorizontal: Spacing.lg,
   },
   title: {
     fontSize: Typography.title,
@@ -32,13 +32,13 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
   },
   subtitle: {
-    marginTop: 12,
+    marginTop: Spacing.sm,
+    marginBottom: Spacing.xl,
     fontSize: Typography.body,
     color: Colors.textSecondary,
     textAlign: "center",
   },
   buttonContainer: {
-    marginTop: 40,
     width: "80%",
   },
 });
