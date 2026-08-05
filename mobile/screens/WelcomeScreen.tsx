@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 
-import { Colors, Radius, Spacing, Typography } from "../theme";
+import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
 import { AppNavigation } from "../navigation/AppNavigator";
 
