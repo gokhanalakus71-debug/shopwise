@@ -1,10 +1,18 @@
 import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import {
+  createNativeStackNavigator,
+  NativeStackNavigationProp,
+} from "@react-navigation/native-stack";
 
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Welcome: undefined;
+  Login: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   return (
@@ -21,3 +29,5 @@ export default function AppNavigator() {
     </NavigationContainer>
   );
 }
+
+export type AppNavigation = NativeStackNavigationProp<RootStackParamList>;
