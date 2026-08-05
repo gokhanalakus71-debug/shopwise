@@ -1,9 +1,14 @@
 import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useNavigation } from "@react-navigation/native";
+
 import { Colors, Radius, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
+import { AppNavigation } from "../navigation/AppNavigator";
 
 export default function WelcomeScreen() {
+  const navigation = useNavigation<AppNavigation>();
+
   return (
     <SafeAreaView style={styles.container}>
       <Text style={styles.logo}>🛍️</Text>
@@ -15,7 +20,10 @@ export default function WelcomeScreen() {
       </Text>
 
       <View style={styles.buttonContainer}>
-        <PrimaryButton title="Get Started" />
+        <PrimaryButton
+          title="Get Started"
+          onPress={() => navigation.navigate("Login")}
+        />
       </View>
     </SafeAreaView>
   );
