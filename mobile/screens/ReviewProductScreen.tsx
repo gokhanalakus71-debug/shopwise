@@ -8,10 +8,10 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-
 import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
 import ReviewService from "../services/ReviewService";
+import OCRService from "../services/OCRService";
 
 export default function ReviewProductScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
@@ -36,11 +36,15 @@ export default function ReviewProductScreen() {
 
     if (result.canceled) return;
 
-    setImageUri(result.assets[0].uri);
+    const imageUri = result.assets[0].uri;
+
+    setImageUri(imageUri);
 
     try {
+      const ocr = await OCRService.extractText(imageUri);
+
       const review = await ReviewService.review({
-        ingredients: "Water, Glycerin",
+        ingredients: ocr.text,
         people: ["Me"],
         healthConsiderations: ["Pregnancy"],
       });
@@ -50,9 +54,11 @@ export default function ReviewProductScreen() {
         review.summary.join("\n")
       );
     } catch (error) {
+      console.error(error);
+
       Alert.alert(
         "Connection Error",
-        "Unable to reach ShopWise backend."
+        "Unable to review this product."
       );
     }
   }
