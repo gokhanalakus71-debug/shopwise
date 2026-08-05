@@ -1,18 +1,12 @@
 import { Router } from "express";
+import ReviewService from "../services/ReviewService.js";
 
 const router = Router();
 
-router.post("/", (req, res) => {
-  console.log("Review Request:");
-  console.log(req.body);
+router.post("/", async (req, res) => {
+  const result = await ReviewService.review(req.body);
 
-  res.json({
-    verdict: "RECOMMENDED",
-    summary: [
-      "No high-risk ingredients detected",
-      "Suitable for selected profile"
-    ]
-  });
+  res.json(result);
 });
 
 export default router;
