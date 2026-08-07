@@ -1,7 +1,7 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
+import SectionCard from "../components/SectionCard";
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
@@ -46,11 +46,11 @@ export default function HomeScreen() {
           <SelectionChip title="+ Add consideration" />
         </View>
 
-        <View style={styles.reviewCard}>
+        <SectionCard>
           <ReviewProductCard
             onPress={() => navigation.navigate("ReviewProduct")}
           />
-        </View>
+        </SectionCard>
 
         <Text style={styles.sectionTitle}>
           Recently Reviewed
