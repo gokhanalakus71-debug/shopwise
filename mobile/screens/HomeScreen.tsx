@@ -3,6 +3,7 @@ import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SectionCard from "../components/SectionCard";
 import SectionHeader from "../components/SectionHeader";
+import ActionCard from "../components/ActionCard";
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
@@ -48,11 +49,14 @@ export default function HomeScreen() {
           <SelectionChip title="+ Add consideration" />
         </View>
 
-        <SectionCard>
-          <ReviewProductCard
-            onPress={() => navigation.navigate("ReviewProduct")}
-          />
-        </SectionCard>
+        <ActionCard
+          title="Review a Product"
+          description="Take a clear photo of the ingredient list or choose one from your gallery."
+          primaryTitle="📸 Take Photo"
+          secondaryTitle="🖼️ Choose From Gallery"
+          onPrimaryPress={() => navigation.navigate("ReviewProduct")}
+          onSecondaryPress={() => navigation.navigate("ReviewProduct")}
+        />
 
         <Text style={styles.sectionTitle}>
           Recently Reviewed
