@@ -2,6 +2,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import SectionCard from "../components/SectionCard";
+import SectionHeader from "../components/SectionHeader";
 import { Colors, Spacing, Typography } from "../theme";
 import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
@@ -24,9 +25,10 @@ export default function HomeScreen() {
           Your AI shopping assistant
         </Text>
 
-        <Text style={styles.sectionTitle}>
-          Review this product for
-        </Text>
+        <SectionHeader
+          icon="📷"
+          title="Review this product for"
+        />
 
         <Text style={styles.groupTitle}>People</Text>
 
