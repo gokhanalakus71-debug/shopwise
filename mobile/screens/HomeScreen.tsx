@@ -14,7 +14,20 @@ import ActionCard from "../components/ActionCard";
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
 
-  const [selectedProfiles, setSelectedProfiles] = useState(["Me"]);
+  const [profiles] = useState([
+    "Me",
+    "Child 1",
+    "Husband",
+  ]);
+
+  const [healthConsiderations] = useState([
+    "Pregnancy",
+    "Gluten Intolerance",
+  ]);
+
+  const [selectedProfiles, setSelectedProfiles] = useState([
+    "Me",
+  ]);
 
   const [selectedHealth, setSelectedHealth] = useState([
     "Pregnancy",
@@ -59,23 +72,14 @@ export default function HomeScreen() {
         </Text>
 
         <View style={styles.chipContainer}>
-          <SelectionChip
-            title="Me"
-            selected={selectedProfiles.includes("Me")}
-            onPress={() => toggleProfile("Me")}
-          />
-
-          <SelectionChip
-            title="Child 1"
-            selected={selectedProfiles.includes("Child 1")}
-            onPress={() => toggleProfile("Child 1")}
-          />
-
-          <SelectionChip
-            title="Husband"
-            selected={selectedProfiles.includes("Husband")}
-            onPress={() => toggleProfile("Husband")}
-          />
+          {profiles.map((profile) => (
+            <SelectionChip
+              key={profile}
+              title={profile}
+              selected={selectedProfiles.includes(profile)}
+              onPress={() => toggleProfile(profile)}
+            />
+          ))}
 
           <SelectionChip
             title="+ Add"
@@ -95,17 +99,14 @@ export default function HomeScreen() {
         </Text>
 
         <View style={styles.chipContainer}>
-          <SelectionChip
-            title="Pregnancy"
-            selected={selectedHealth.includes("Pregnancy")}
-            onPress={() => toggleHealth("Pregnancy")}
-          />
-
-          <SelectionChip
-            title="Gluten Intolerance"
-            selected={selectedHealth.includes("Gluten Intolerance")}
-            onPress={() => toggleHealth("Gluten Intolerance")}
-          />
+          {healthConsiderations.map((item) => (
+            <SelectionChip
+              key={item}
+              title={item}
+              selected={selectedHealth.includes(item)}
+              onPress={() => toggleHealth(item)}
+            />
+          ))}
 
           <SelectionChip
             title="+ Add"
