@@ -2,7 +2,14 @@ import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import { Colors, Radius, Shadows, Spacing, Typography } from "../theme";
+import {
+  Colors,
+  Radius,
+  Shadows,
+  Spacing,
+  Typography,
+} from "../theme";
+
 import PrimaryButton from "./PrimaryButton";
 
 type Props = {
@@ -25,12 +32,14 @@ export default function ActionCard({
   return (
     <View style={styles.card}>
       <Ionicons
-        name="camera-outline"
-        size={42}
+        name="search-outline"
+        size={46}
         color={Colors.primary}
       />
 
-      <Text style={styles.title}>{title}</Text>
+      <Text style={styles.title}>
+        {title}
+      </Text>
 
       <Text style={styles.description}>
         {description}
@@ -41,7 +50,13 @@ export default function ActionCard({
         onPress={onPrimaryPress}
       />
 
-      <View style={styles.spacing} />
+      <View style={styles.divider}>
+        <View style={styles.line} />
+
+        <Text style={styles.or}>OR</Text>
+
+        <View style={styles.line} />
+      </View>
 
       <PrimaryButton
         title={secondaryTitle}
@@ -69,13 +84,29 @@ const styles = StyleSheet.create({
 
   description: {
     marginTop: Spacing.sm,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
     textAlign: "center",
     color: Colors.textSecondary,
     fontSize: Typography.body,
   },
 
-  spacing: {
-    height: Spacing.md,
+  divider: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: Spacing.lg,
+    width: "100%",
+  },
+
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Colors.border,
+  },
+
+  or: {
+    marginHorizontal: Spacing.md,
+    color: Colors.textSecondary,
+    fontSize: Typography.small,
+    fontWeight: Typography.weightMedium,
   },
 });
