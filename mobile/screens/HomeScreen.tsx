@@ -20,6 +20,14 @@ export default function HomeScreen() {
     "Pregnancy",
   ]);  
 
+  function toggleProfile(profile: string) {
+    setSelectedProfiles((current) =>
+      current.includes(profile)
+        ? current.filter((item) => item !== profile)
+        : [...current, profile]
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -41,9 +49,23 @@ export default function HomeScreen() {
         <Text style={styles.groupTitle}>People</Text>
 
         <View style={styles.chipContainer}>
-          <SelectionChip title="Me" selected />
-          <SelectionChip title="Child 1" />
-          <SelectionChip title="Husband" />
+          <SelectionChip
+            title="Me"
+            selected={selectedProfiles.includes("Me")}
+            onPress={() => toggleProfile("Me")}
+          />
+
+          <SelectionChip
+            title="Child 1"
+            selected={selectedProfiles.includes("Child 1")}
+            onPress={() => toggleProfile("Child 1")}
+          />
+
+          <SelectionChip
+            title="Husband"
+            selected={selectedProfiles.includes("Husband")}
+            onPress={() => toggleProfile("Husband")}
+          />
         </View>
 
         <Text style={styles.groupTitle}>
