@@ -1,15 +1,15 @@
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import SectionCard from "../components/SectionCard";
+
+import { Colors, Spacing, Typography } from "../theme";
+import { AppNavigation } from "../navigation/AppNavigator";
+
+import BottomNavigation from "../components/BottomNavigation";
+import SelectionChip from "../components/SelectionChip";
 import SectionHeader from "../components/SectionHeader";
 import ActionCard from "../components/ActionCard";
-import { Colors, Spacing, Typography } from "../theme";
-import SelectionChip from "../components/SelectionChip";
-import ReviewProductCard from "../components/ReviewProductCard";
-import BottomNavigation from "../components/BottomNavigation";
-import { AppNavigation } from "../navigation/AppNavigator";
-import { useState } from "react";
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
@@ -18,13 +18,21 @@ export default function HomeScreen() {
 
   const [selectedHealth, setSelectedHealth] = useState([
     "Pregnancy",
-  ]);  
+  ]);
 
   function toggleProfile(profile: string) {
     setSelectedProfiles((current) =>
       current.includes(profile)
         ? current.filter((item) => item !== profile)
         : [...current, profile]
+    );
+  }
+
+  function toggleHealth(consideration: string) {
+    setSelectedHealth((current) =>
+      current.includes(consideration)
+        ? current.filter((item) => item !== consideration)
+        : [...current, consideration]
     );
   }
 
@@ -42,11 +50,13 @@ export default function HomeScreen() {
         </Text>
 
         <SectionHeader
-          icon="📷"
-          title="Review this product for"
+          icon=""
+          title="Choose profiles"
         />
 
-        <Text style={styles.groupTitle}>People</Text>
+        <Text style={styles.sectionDescription}>
+          Select who you're shopping for.
+        </Text>
 
         <View style={styles.chipContainer}>
           <SelectionChip
@@ -66,22 +76,49 @@ export default function HomeScreen() {
             selected={selectedProfiles.includes("Husband")}
             onPress={() => toggleProfile("Husband")}
           />
+
+          <SelectionChip
+            title="+ Add"
+            onPress={() => {
+              // Coming soon
+            }}
+          />
         </View>
 
-        <Text style={styles.groupTitle}>
-          Health considerations
+        <SectionHeader
+          icon=""
+          title="Health considerations"
+        />
+
+        <Text style={styles.sectionDescription}>
+          Select any that apply.
         </Text>
 
         <View style={styles.chipContainer}>
-          <SelectionChip title="Pregnancy" />
-          <SelectionChip title="Gluten Intolerance" />
-          <SelectionChip title="+ Add consideration" />
+          <SelectionChip
+            title="Pregnancy"
+            selected={selectedHealth.includes("Pregnancy")}
+            onPress={() => toggleHealth("Pregnancy")}
+          />
+
+          <SelectionChip
+            title="Gluten Intolerance"
+            selected={selectedHealth.includes("Gluten Intolerance")}
+            onPress={() => toggleHealth("Gluten Intolerance")}
+          />
+
+          <SelectionChip
+            title="+ Add"
+            onPress={() => {
+              // Coming soon
+            }}
+          />
         </View>
 
         <ActionCard
-          title="Review a Product"
+          title="Review Product"
           description="Take a clear photo of the ingredient list or choose one from your gallery."
-          primaryTitle="📸 Take Photo"
+          primaryTitle="📷 Take Photo"
           secondaryTitle="🖼️ Choose From Gallery"
           onPrimaryPress={() => navigation.navigate("ReviewProduct")}
           onSecondaryPress={() => navigation.navigate("ReviewProduct")}
@@ -130,29 +167,25 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 
+  sectionDescription: {
+    marginTop: -Spacing.sm,
+    marginBottom: Spacing.md,
+    fontSize: Typography.small,
+    color: Colors.textSecondary,
+  },
+
   sectionTitle: {
-    marginTop: Spacing.lg,
+    marginTop: Spacing.xl,
     marginBottom: Spacing.md,
     fontSize: Typography.body,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
   },
 
-  groupTitle: {
-    marginBottom: Spacing.sm,
-    fontSize: Typography.caption,
-    fontWeight: Typography.weightBold,
-    color: Colors.textSecondary,
-  },
-
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    marginBottom: Spacing.lg,
-  },
-
-  reviewCard: {
-    marginVertical: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
 
   review: {
