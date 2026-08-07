@@ -26,7 +26,6 @@ export default function SelectionChip({
           selected && styles.selectedText,
         ]}
       >
-        {selected ? "✓ " : ""}
         {title}
       </Text>
     </Pressable>
@@ -36,10 +35,10 @@ export default function SelectionChip({
 const styles = StyleSheet.create({
   container: {
     borderWidth: 1,
-    borderColor: Colors.border,
+    borderColor: Colors.primary,
     borderRadius: Radius.round,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 12,
     backgroundColor: Colors.surface,
     marginRight: Spacing.sm,
     marginBottom: Spacing.sm,
