@@ -9,9 +9,16 @@ import SelectionChip from "../components/SelectionChip";
 import ReviewProductCard from "../components/ReviewProductCard";
 import BottomNavigation from "../components/BottomNavigation";
 import { AppNavigation } from "../navigation/AppNavigator";
+import { useState } from "react";
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
+
+  const [selectedProfiles, setSelectedProfiles] = useState(["Me"]);
+
+  const [selectedHealth, setSelectedHealth] = useState([
+    "Pregnancy",
+  ]);  
 
   return (
     <SafeAreaView style={styles.container}>
