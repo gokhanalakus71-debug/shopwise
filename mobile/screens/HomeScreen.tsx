@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { Colors, Spacing, Typography } from "../theme";
-import { AppNavigation } from "../navigation/AppNavigator";
+import { AppNavigation, RootStackParamList } from "../navigation/AppNavigator";
 
 import BottomNavigation from "../components/BottomNavigation";
 import SelectionChip from "../components/SelectionChip";
@@ -14,7 +14,15 @@ import ActionCard from "../components/ActionCard";
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
 
-  const [profiles] = useState([
+  const route =
+    useRoute<
+      import("@react-navigation/native").RouteProp<
+        RootStackParamList,
+        "Home"
+      >
+    >();
+
+  const [profiles, setProfiles] = useState([
     "Me",
     "Child 1",
     "Husband",
@@ -32,6 +40,19 @@ export default function HomeScreen() {
   const [selectedHealth, setSelectedHealth] = useState([
     "Pregnancy",
   ]);
+
+  useEffect(() => {
+    const newProfile = route.params?.newProfile;
+
+    if (newProfile && !profiles.includes(newProfile)) {
+      setProfiles((current) => [...current, newProfile]);
+      setSelectedProfiles((current) => [...current, newProfile]);
+
+      navigation.setParams({
+        newProfile: undefined,
+      });
+    }
+  }, [route.params?.newProfile]);
 
   function toggleProfile(profile: string) {
     setSelectedProfiles((current) =>
