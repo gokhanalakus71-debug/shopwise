@@ -99,6 +99,9 @@ export default function HomeScreen() {
               title={profile}
               selected={selectedProfiles.includes(profile)}
               onPress={() => toggleProfile(profile)}
+              onLongPress={() => {
+                // Profile actions will be added next
+              }}
             />
           ))}
 
