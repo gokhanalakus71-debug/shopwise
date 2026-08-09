@@ -109,6 +109,12 @@ export default function HomeScreen() {
                   "What would you like to do?",
                   [
                     {
+                      text: "Edit",
+                      onPress: () => {
+                        // Edit will be implemented next
+                      },
+                    },
+                    {
                       text: "Cancel",
                       style: "cancel",
                     },
