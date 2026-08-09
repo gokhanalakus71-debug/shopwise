@@ -9,7 +9,10 @@ import {
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Colors, Spacing, Typography } from "../theme";
-import { AppNavigation, RootStackParamList } from "../navigation/AppNavigator";
+import {
+  AppNavigation,
+  RootStackParamList,
+} from "../navigation/AppNavigator";
 import BottomNavigation from "../components/BottomNavigation";
 import SelectionChip from "../components/SelectionChip";
 import SectionHeader from "../components/SectionHeader";
@@ -74,6 +77,16 @@ export default function HomeScreen() {
     );
   }
 
+  function deleteProfile(profile: string) {
+    setProfiles((current) =>
+      current.filter((item) => item !== profile)
+    );
+
+    setSelectedProfiles((current) =>
+      current.filter((item) => item !== profile)
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -122,7 +135,7 @@ export default function HomeScreen() {
                       text: "Delete",
                       style: "destructive",
                       onPress: () => {
-                        // Delete will be implemented next
+                        deleteProfile(profile);
                       },
                     },
                   ]
