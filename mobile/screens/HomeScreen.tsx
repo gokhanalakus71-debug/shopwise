@@ -108,12 +108,10 @@ export default function HomeScreen() {
             />
           ))}
 
-          <SelectionChip
-            title="+ Add"
-            onPress={() => {
-              // Coming soon
-            }}
-          />
+        <SelectionChip
+          title="+ Add"
+          onPress={() => navigation.navigate("AddProfile")}
+        />
         </View>
 
         <ActionCard
