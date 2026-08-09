@@ -5,16 +5,19 @@ type Props = {
   title: string;
   selected?: boolean;
   onPress?: () => void;
+  onLongPress?: () => void;
 };
 
 export default function SelectionChip({
   title,
   selected = false,
   onPress,
+  onLongPress,
 }: Props) {
   return (
     <Pressable
       onPress={onPress}
+      onLongPress={onLongPress}
       style={[
         styles.container,
         selected && styles.selectedContainer,
