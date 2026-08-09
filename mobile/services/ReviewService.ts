@@ -1,4 +1,4 @@
-const API_URL = "10.198.150.137:3000";
+const API_URL = "http://10.0.2.2:3000";
 
 export interface ReviewRequest {
   ingredients: string;
