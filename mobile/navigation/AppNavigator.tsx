@@ -12,12 +12,22 @@ import AddProfileScreen from "../screens/AddProfileScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
+
   Login: undefined;
+
   Home: {
     newProfile?: string;
+    editedProfile?: {
+      oldName: string;
+      newName: string;
+    };
   };
+
   ReviewProduct: undefined;
-  AddProfile: undefined;
+
+  AddProfile: {
+    profile?: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

@@ -8,11 +8,13 @@ import {
   View,
 } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
+
 import { Colors, Spacing, Typography } from "../theme";
 import {
   AppNavigation,
   RootStackParamList,
 } from "../navigation/AppNavigator";
+
 import BottomNavigation from "../components/BottomNavigation";
 import SelectionChip from "../components/SelectionChip";
 import SectionHeader from "../components/SectionHeader";
@@ -61,6 +63,32 @@ export default function HomeScreen() {
     }
   }, [route.params?.newProfile]);
 
+  useEffect(() => {
+    const editedProfile = route.params?.editedProfile;
+
+    if (editedProfile) {
+      setProfiles((current) =>
+        current.map((profile) =>
+          profile === editedProfile.oldName
+            ? editedProfile.newName
+            : profile
+        )
+      );
+
+      setSelectedProfiles((current) =>
+        current.map((profile) =>
+          profile === editedProfile.oldName
+            ? editedProfile.newName
+            : profile
+        )
+      );
+
+      navigation.setParams({
+        editedProfile: undefined,
+      });
+    }
+  }, [route.params?.editedProfile]);
+
   function toggleProfile(profile: string) {
     setSelectedProfiles((current) =>
       current.includes(profile)
@@ -85,6 +113,12 @@ export default function HomeScreen() {
     setSelectedProfiles((current) =>
       current.filter((item) => item !== profile)
     );
+  }
+
+  function editProfile(profile: string) {
+    navigation.navigate("AddProfile", {
+      profile,
+    });
   }
 
   return (
@@ -124,7 +158,7 @@ export default function HomeScreen() {
                     {
                       text: "Edit",
                       onPress: () => {
-                        // Edit will be implemented next
+                        editProfile(profile);
                       },
                     },
                     {
@@ -146,7 +180,9 @@ export default function HomeScreen() {
 
           <SelectionChip
             title="+ Add"
-            onPress={() => navigation.navigate("AddProfile")}
+            onPress={() =>
+              navigation.navigate("AddProfile", {})
+            }
           />
         </View>
 
@@ -182,8 +218,12 @@ export default function HomeScreen() {
           description="Take a clear photo of the ingredient list or choose one from your gallery."
           primaryTitle="📷 Take Photo"
           secondaryTitle="🖼️ Choose From Gallery"
-          onPrimaryPress={() => navigation.navigate("ReviewProduct")}
-          onSecondaryPress={() => navigation.navigate("ReviewProduct")}
+          onPrimaryPress={() =>
+            navigation.navigate("ReviewProduct")
+          }
+          onSecondaryPress={() =>
+            navigation.navigate("ReviewProduct")
+          }
         />
       </ScrollView>
 

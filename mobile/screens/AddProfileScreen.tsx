@@ -7,22 +7,45 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { Colors, Radius, Spacing, Typography } from "../theme";
-import { AppNavigation } from "../navigation/AppNavigator";
+import {
+  AppNavigation,
+  RootStackParamList,
+} from "../navigation/AppNavigator";
 
 export default function AddProfileScreen() {
   const navigation = useNavigation<AppNavigation>();
 
-  const [name, setName] = useState("");
+  const route =
+    useRoute<
+      import("@react-navigation/native").RouteProp<
+        RootStackParamList,
+        "AddProfile"
+      >
+    >();
+
+  const editingProfile = route.params?.profile;
+
+  const [name, setName] = useState(editingProfile ?? "");
 
   function handleSave() {
     const trimmed = name.trim();
 
     if (!trimmed) {
       Alert.alert("Profile name", "Please enter a profile name.");
+      return;
+    }
+
+    if (editingProfile) {
+      navigation.navigate("Home", {
+        editedProfile: {
+          oldName: editingProfile,
+          newName: trimmed,
+        },
+      });
       return;
     }
 
@@ -34,10 +57,14 @@ export default function AddProfileScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Add Profile</Text>
+        <Text style={styles.title}>
+          {editingProfile ? "Edit Profile" : "Add Profile"}
+        </Text>
 
         <Text style={styles.subtitle}>
-          Create a profile for someone you shop for.
+          {editingProfile
+            ? "Update the profile name."
+            : "Create a profile for someone you shop for."}
         </Text>
 
         <Text style={styles.label}>Name</Text>
