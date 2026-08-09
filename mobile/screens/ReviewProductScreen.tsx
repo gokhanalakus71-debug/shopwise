@@ -16,11 +16,11 @@ import OCRService from "../services/OCRService";
 export default function ReviewProductScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  async function processImage(imageUri: string) {
-    setImageUri(imageUri);
+  async function processImage(uri: string) {
+    setImageUri(uri);
 
     try {
-      const ocr = await OCRService.extractText(imageUri);
+      const ocr = await OCRService.extractText(uri);
 
       const review = await ReviewService.review({
         ingredients: ocr.text,
@@ -77,11 +77,12 @@ export default function ReviewProductScreen() {
       return;
     }
 
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["images"],
-      allowsEditing: false,
-      quality: 1,
-    });
+    const result =
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 1,
+      });
 
     if (result.canceled) return;
 
@@ -91,7 +92,9 @@ export default function ReviewProductScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Review Product</Text>
+        <Text style={styles.title}>
+          Review Product
+        </Text>
 
         <Text style={styles.subtitle}>
           Take a clear photo of the ingredients list.
@@ -102,12 +105,12 @@ export default function ReviewProductScreen() {
           onPress={handleTakePhoto}
         />
 
-        <View style={styles.buttonSpacing}>
-          <PrimaryButton
-            title="Choose from Gallery"
-            onPress={handleChooseFromGallery}
-          />
-        </View>
+        <View style={styles.gap} />
+
+        <PrimaryButton
+          title="Choose from Gallery"
+          onPress={handleChooseFromGallery}
+        />
 
         {imageUri && (
           <Image
@@ -147,8 +150,8 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 
-  buttonSpacing: {
-    marginTop: Spacing.md,
+  gap: {
+    height: Spacing.md,
   },
 
   preview: {
