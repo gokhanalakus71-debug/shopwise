@@ -114,6 +114,33 @@ export default function HomeScreen() {
     }
   }, [route.params?.newHealthConsideration]);
 
+  useEffect(() => {
+    const editedHealthConsideration =
+      route.params?.editedHealthConsideration;
+
+    if (editedHealthConsideration) {
+      setHealthConsiderations((current) =>
+        current.map((item) =>
+          item === editedHealthConsideration.oldName
+            ? editedHealthConsideration.newName
+            : item
+        )
+      );
+
+      setSelectedHealth((current) =>
+        current.map((item) =>
+          item === editedHealthConsideration.oldName
+            ? editedHealthConsideration.newName
+            : item
+        )
+      );
+
+      navigation.setParams({
+        editedHealthConsideration: undefined,
+      });
+    }
+  }, [route.params?.editedHealthConsideration]);
+
   function toggleProfile(profile: string) {
     setSelectedProfiles((current) =>
       current.includes(profile)
@@ -143,6 +170,22 @@ export default function HomeScreen() {
   function editProfile(profile: string) {
     navigation.navigate("AddProfile", {
       profile,
+    });
+  }
+
+  function deleteHealthConsideration(consideration: string) {
+    setHealthConsiderations((current) =>
+      current.filter((item) => item !== consideration)
+    );
+
+    setSelectedHealth((current) =>
+      current.filter((item) => item !== consideration)
+    );
+  }
+
+  function editHealthConsideration(consideration: string) {
+    navigation.navigate("AddHealthConsideration", {
+      consideration,
     });
   }
 
@@ -227,13 +270,41 @@ export default function HomeScreen() {
               title={item}
               selected={selectedHealth.includes(item)}
               onPress={() => toggleHealth(item)}
+              onLongPress={() => {
+                Alert.alert(
+                  item,
+                  "What would you like to do?",
+                  [
+                    {
+                      text: "Edit",
+                      onPress: () => {
+                        editHealthConsideration(item);
+                      },
+                    },
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => {
+                        deleteHealthConsideration(item);
+                      },
+                    },
+                  ]
+                );
+              }}
             />
           ))}
 
           <SelectionChip
             title="+ Add"
             onPress={() =>
-              navigation.navigate("AddHealthConsideration", {})
+              navigation.navigate(
+                "AddHealthConsideration",
+                {}
+              )
             }
           />
         </View>
