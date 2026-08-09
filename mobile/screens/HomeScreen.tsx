@@ -56,7 +56,12 @@ export default function HomeScreen() {
 
     if (newProfile && !profiles.includes(newProfile)) {
       setProfiles((current) => [...current, newProfile]);
-      setSelectedProfiles((current) => [...current, newProfile]);
+
+      setSelectedProfiles((current) =>
+        current.includes(newProfile)
+          ? current
+          : [...current, newProfile]
+      );
 
       navigation.setParams({
         newProfile: undefined,
@@ -68,21 +73,31 @@ export default function HomeScreen() {
     const editedProfile = route.params?.editedProfile;
 
     if (editedProfile) {
-      setProfiles((current) =>
-        current.map((profile) =>
-          profile === editedProfile.oldName
-            ? editedProfile.newName
-            : profile
-        )
-      );
+      setProfiles((current) => {
+        if (current.includes(editedProfile.oldName)) {
+          return current.map((profile) =>
+            profile === editedProfile.oldName
+              ? editedProfile.newName
+              : profile
+          );
+        }
 
-      setSelectedProfiles((current) =>
-        current.map((profile) =>
-          profile === editedProfile.oldName
-            ? editedProfile.newName
-            : profile
-        )
-      );
+        return [...current, editedProfile.newName];
+      });
+
+      setSelectedProfiles((current) => {
+        if (current.includes(editedProfile.oldName)) {
+          return current.map((profile) =>
+            profile === editedProfile.oldName
+              ? editedProfile.newName
+              : profile
+          );
+        }
+
+        return current.includes(editedProfile.newName)
+          ? current
+          : [...current, editedProfile.newName];
+      });
 
       navigation.setParams({
         editedProfile: undefined,
@@ -103,10 +118,11 @@ export default function HomeScreen() {
         newHealthConsideration,
       ]);
 
-      setSelectedHealth((current) => [
-        ...current,
-        newHealthConsideration,
-      ]);
+      setSelectedHealth((current) =>
+        current.includes(newHealthConsideration)
+          ? current
+          : [...current, newHealthConsideration]
+      );
 
       navigation.setParams({
         newHealthConsideration: undefined,
@@ -119,21 +135,39 @@ export default function HomeScreen() {
       route.params?.editedHealthConsideration;
 
     if (editedHealthConsideration) {
-      setHealthConsiderations((current) =>
-        current.map((item) =>
-          item === editedHealthConsideration.oldName
-            ? editedHealthConsideration.newName
-            : item
-        )
-      );
+      setHealthConsiderations((current) => {
+        if (current.includes(editedHealthConsideration.oldName)) {
+          return current.map((item) =>
+            item === editedHealthConsideration.oldName
+              ? editedHealthConsideration.newName
+              : item
+          );
+        }
 
-      setSelectedHealth((current) =>
-        current.map((item) =>
-          item === editedHealthConsideration.oldName
-            ? editedHealthConsideration.newName
-            : item
+        return [
+          ...current,
+          editedHealthConsideration.newName,
+        ];
+      });
+
+      setSelectedHealth((current) => {
+        if (current.includes(editedHealthConsideration.oldName)) {
+          return current.map((item) =>
+            item === editedHealthConsideration.oldName
+              ? editedHealthConsideration.newName
+              : item
+          );
+        }
+
+        return current.includes(
+          editedHealthConsideration.newName
         )
-      );
+          ? current
+          : [
+              ...current,
+              editedHealthConsideration.newName,
+            ];
+      });
 
       navigation.setParams({
         editedHealthConsideration: undefined,
@@ -173,7 +207,9 @@ export default function HomeScreen() {
     });
   }
 
-  function deleteHealthConsideration(consideration: string) {
+  function deleteHealthConsideration(
+    consideration: string
+  ) {
     setHealthConsiderations((current) =>
       current.filter((item) => item !== consideration)
     );
@@ -183,7 +219,9 @@ export default function HomeScreen() {
     );
   }
 
-  function editHealthConsideration(consideration: string) {
+  function editHealthConsideration(
+    consideration: string
+  ) {
     navigation.navigate("AddHealthConsideration", {
       consideration,
     });
