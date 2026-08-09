@@ -13,7 +13,9 @@ import AddProfileScreen from "../screens/AddProfileScreen";
 export type RootStackParamList = {
   Welcome: undefined;
   Login: undefined;
-  Home: undefined;
+  Home: {
+    newProfile?: string;
+  };
   ReviewProduct: undefined;
   AddProfile: undefined;
 };

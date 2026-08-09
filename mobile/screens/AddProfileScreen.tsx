@@ -11,9 +11,10 @@ import { useNavigation } from "@react-navigation/native";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { Colors, Radius, Spacing, Typography } from "../theme";
+import { AppNavigation } from "../navigation/AppNavigator";
 
 export default function AddProfileScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<AppNavigation>();
 
   const [name, setName] = useState("");
 
@@ -25,9 +26,9 @@ export default function AddProfileScreen() {
       return;
     }
 
-    // Saving will be added in the next step
-
-    navigation.goBack();
+    navigation.navigate("Home", {
+      newProfile: trimmed,
+    });
   }
 
   return (
