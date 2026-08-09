@@ -81,10 +81,10 @@ export default function HomeScreen() {
             />
           ))}
 
-        <SelectionChip
-          title="+ Add"
-          onPress={() => navigation.navigate("AddProfile")}
-        />
+          <SelectionChip
+            title="+ Add"
+            onPress={() => navigation.navigate("AddProfile")}
+          />
         </View>
 
         <SectionHeader
@@ -106,10 +106,12 @@ export default function HomeScreen() {
             />
           ))}
 
-        <SelectionChip
-          title="+ Add"
-          onPress={() => navigation.navigate("AddProfile")}
-        />
+          <SelectionChip
+            title="+ Add"
+            onPress={() => {
+              // Coming soon
+            }}
+          />
         </View>
 
         <ActionCard
@@ -120,14 +122,6 @@ export default function HomeScreen() {
           onPrimaryPress={() => navigation.navigate("ReviewProduct")}
           onSecondaryPress={() => navigation.navigate("ReviewProduct")}
         />
-
-        <Text style={styles.sectionTitle}>
-          Recently Reviewed
-        </Text>
-
-        <Text style={styles.review}>🟢 Dove Shampoo</Text>
-        <Text style={styles.review}>🟡 Nutella</Text>
-        <Text style={styles.review}>🔴 Kinder Chocolate</Text>
       </ScrollView>
 
       <BottomNavigation />
@@ -171,23 +165,9 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 
-  sectionTitle: {
-    marginTop: Spacing.xl,
-    marginBottom: Spacing.md,
-    fontSize: Typography.body,
-    fontWeight: Typography.weightBold,
-    color: Colors.textPrimary,
-  },
-
   chipContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
     marginBottom: Spacing.xl,
-  },
-
-  review: {
-    marginBottom: Spacing.sm,
-    fontSize: Typography.body,
-    color: Colors.textPrimary,
   },
 });
