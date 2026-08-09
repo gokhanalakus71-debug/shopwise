@@ -29,6 +29,9 @@ export type RootStackParamList = {
   AddProfile: {
     profile?: string;
   };
+
+  AddHealthConsideration: undefined;  
+
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();

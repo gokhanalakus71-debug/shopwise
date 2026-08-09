@@ -37,10 +37,11 @@ export default function HomeScreen() {
     "Husband",
   ]);
 
-  const [healthConsiderations] = useState([
-    "Pregnancy",
-    "Gluten Intolerance",
-  ]);
+  const [healthConsiderations, setHealthConsiderations] =
+    useState([
+      "Pregnancy",
+      "Gluten Intolerance",
+    ]);
 
   const [selectedProfiles, setSelectedProfiles] = useState([
     "Me",
@@ -88,6 +89,30 @@ export default function HomeScreen() {
       });
     }
   }, [route.params?.editedProfile]);
+
+  useEffect(() => {
+    const newHealthConsideration =
+      route.params?.newHealthConsideration;
+
+    if (
+      newHealthConsideration &&
+      !healthConsiderations.includes(newHealthConsideration)
+    ) {
+      setHealthConsiderations((current) => [
+        ...current,
+        newHealthConsideration,
+      ]);
+
+      setSelectedHealth((current) => [
+        ...current,
+        newHealthConsideration,
+      ]);
+
+      navigation.setParams({
+        newHealthConsideration: undefined,
+      });
+    }
+  }, [route.params?.newHealthConsideration]);
 
   function toggleProfile(profile: string) {
     setSelectedProfiles((current) =>
@@ -207,9 +232,9 @@ export default function HomeScreen() {
 
           <SelectionChip
             title="+ Add"
-            onPress={() => {
-              // Coming soon
-            }}
+            onPress={() =>
+              navigation.navigate("AddHealthConsideration")
+            }
           />
         </View>
 
