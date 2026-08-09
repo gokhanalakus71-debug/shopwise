@@ -3,7 +3,7 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-
+import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
@@ -69,6 +69,12 @@ export default function AppNavigator() {
           name="AddProfile"
           component={AddProfileScreen}
         />
+
+        <Stack.Screen
+          name="AddHealthConsideration"
+          component={AddHealthConsiderationScreen}
+        />
+
       </Stack.Navigator>
     </NavigationContainer>
   );
