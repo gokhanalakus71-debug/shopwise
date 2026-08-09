@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Alert,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-
 import { Colors, Spacing, Typography } from "../theme";
 import { AppNavigation, RootStackParamList } from "../navigation/AppNavigator";
-
 import BottomNavigation from "../components/BottomNavigation";
 import SelectionChip from "../components/SelectionChip";
 import SectionHeader from "../components/SectionHeader";
@@ -100,7 +104,23 @@ export default function HomeScreen() {
               selected={selectedProfiles.includes(profile)}
               onPress={() => toggleProfile(profile)}
               onLongPress={() => {
-                // Profile actions will be added next
+                Alert.alert(
+                  profile,
+                  "What would you like to do?",
+                  [
+                    {
+                      text: "Cancel",
+                      style: "cancel",
+                    },
+                    {
+                      text: "Delete",
+                      style: "destructive",
+                      onPress: () => {
+                        // Delete will be implemented next
+                      },
+                    },
+                  ]
+                );
               }}
             />
           ))}
