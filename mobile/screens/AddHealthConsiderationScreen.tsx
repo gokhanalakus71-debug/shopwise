@@ -7,16 +7,32 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import PrimaryButton from "../components/PrimaryButton";
 import { Colors, Radius, Spacing, Typography } from "../theme";
-import { AppNavigation } from "../navigation/AppNavigator";
+import {
+  AppNavigation,
+  RootStackParamList,
+} from "../navigation/AppNavigator";
 
 export default function AddHealthConsiderationScreen() {
   const navigation = useNavigation<AppNavigation>();
 
-  const [name, setName] = useState("");
+  const route =
+    useRoute<
+      import("@react-navigation/native").RouteProp<
+        RootStackParamList,
+        "AddHealthConsideration"
+      >
+    >();
+
+  const editingConsideration =
+    route.params?.consideration;
+
+  const [name, setName] = useState(
+    editingConsideration ?? ""
+  );
 
   function handleSave() {
     const trimmed = name.trim();
@@ -29,6 +45,16 @@ export default function AddHealthConsiderationScreen() {
       return;
     }
 
+    if (editingConsideration) {
+      navigation.navigate("Home", {
+        editedHealthConsideration: {
+          oldName: editingConsideration,
+          newName: trimmed,
+        },
+      });
+      return;
+    }
+
     navigation.navigate("Home", {
       newHealthConsideration: trimmed,
     });
@@ -38,11 +64,15 @@ export default function AddHealthConsiderationScreen() {
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>
-          Add Health Consideration
+          {editingConsideration
+            ? "Edit Health Consideration"
+            : "Add Health Consideration"}
         </Text>
 
         <Text style={styles.subtitle}>
-          Add a health consideration for product reviews.
+          {editingConsideration
+            ? "Update the health consideration."
+            : "Add a health consideration for product reviews."}
         </Text>
 
         <Text style={styles.label}>Name</Text>

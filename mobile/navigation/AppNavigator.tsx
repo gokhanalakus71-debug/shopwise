@@ -3,12 +3,13 @@ import {
   createNativeStackNavigator,
   NativeStackNavigationProp,
 } from "@react-navigation/native-stack";
-import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
+
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ReviewProductScreen from "../screens/ReviewProductScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
+import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -22,6 +23,10 @@ export type RootStackParamList = {
       newName: string;
     };
     newHealthConsideration?: string;
+    editedHealthConsideration?: {
+      oldName: string;
+      newName: string;
+    };
   };
 
   ReviewProduct: undefined;
@@ -30,8 +35,9 @@ export type RootStackParamList = {
     profile?: string;
   };
 
-  AddHealthConsideration: undefined;  
-
+  AddHealthConsideration: {
+    consideration?: string;
+  };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -74,7 +80,6 @@ export default function AppNavigator() {
           name="AddHealthConsideration"
           component={AddHealthConsiderationScreen}
         />
-
       </Stack.Navigator>
     </NavigationContainer>
   );

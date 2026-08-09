@@ -233,7 +233,7 @@ export default function HomeScreen() {
           <SelectionChip
             title="+ Add"
             onPress={() =>
-              navigation.navigate("AddHealthConsideration")
+              navigation.navigate("AddHealthConsideration", {})
             }
           />
         </View>
