@@ -16,28 +16,7 @@ import OCRService from "../services/OCRService";
 export default function ReviewProductScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
 
-  async function handleTakePhoto() {
-    const permission =
-      await ImagePicker.requestCameraPermissionsAsync();
-
-    if (!permission.granted) {
-      Alert.alert(
-        "Camera Permission",
-        "ShopWise needs camera access to review product ingredients."
-      );
-      return;
-    }
-
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
-      allowsEditing: false,
-      quality: 1,
-    });
-
-    if (result.canceled) return;
-
-    const imageUri = result.assets[0].uri;
-
+  async function processImage(imageUri: string) {
     setImageUri(imageUri);
 
     try {
@@ -63,6 +42,52 @@ export default function ReviewProductScreen() {
     }
   }
 
+  async function handleTakePhoto() {
+    const permission =
+      await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Camera Permission",
+        "ShopWise needs camera access to review product ingredients."
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    await processImage(result.assets[0].uri);
+  }
+
+  async function handleChooseFromGallery() {
+    const permission =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Photo Library Permission",
+        "ShopWise needs access to your photos to review product ingredients."
+      );
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: false,
+      quality: 1,
+    });
+
+    if (result.canceled) return;
+
+    await processImage(result.assets[0].uri);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -76,6 +101,13 @@ export default function ReviewProductScreen() {
           title="Take Photo"
           onPress={handleTakePhoto}
         />
+
+        <View style={styles.buttonSpacing}>
+          <PrimaryButton
+            title="Choose from Gallery"
+            onPress={handleChooseFromGallery}
+          />
+        </View>
 
         {imageUri && (
           <Image
@@ -113,6 +145,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: Typography.body,
     color: Colors.textSecondary,
+  },
+
+  buttonSpacing: {
+    marginTop: Spacing.md,
   },
 
   preview: {
