@@ -21,6 +21,7 @@ export type RootStackParamList = {
       oldName: string;
       newName: string;
     };
+    newHealthConsideration?: string;
   };
 
   ReviewProduct: undefined;
