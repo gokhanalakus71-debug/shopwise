@@ -353,10 +353,16 @@ export default function HomeScreen() {
           primaryTitle="📷 Take Photo"
           secondaryTitle="🖼️ Choose From Gallery"
           onPrimaryPress={() =>
-            navigation.navigate("ReviewProduct")
+            navigation.navigate("ReviewProduct", {
+              profiles: selectedProfiles,
+              healthConsiderations: selectedHealth,
+            })
           }
           onSecondaryPress={() =>
-            navigation.navigate("ReviewProduct")
+            navigation.navigate("ReviewProduct", {
+              profiles: selectedProfiles,
+              healthConsiderations: selectedHealth,
+            })
           }
         />
       </ScrollView>

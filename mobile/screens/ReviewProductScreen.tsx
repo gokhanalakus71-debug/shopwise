@@ -1,53 +1,81 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  ScrollView,
+  Alert,
+  Image,
   StyleSheet,
   Text,
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import {
-  Colors,
-  Radius,
-  Spacing,
-  Typography,
-} from "../theme";
+import { useRoute } from "@react-navigation/native";
+
+import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
-import ReviewService, {
-  ReviewResponse,
-} from "../services/ReviewService";
-import OCRService from "../services/OCRService";
 import ProcessingOverlay from "../components/ProcessingOverlay";
+import ReviewService from "../services/ReviewService";
+import OCRService from "../services/OCRService";
+
+import {
+  RootStackParamList,
+} from "../navigation/AppNavigator";
 
 export default function ReviewProductScreen() {
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [review, setReview] = useState<ReviewResponse | null>(null);
+  const route =
+    useRoute<
+      import("@react-navigation/native").RouteProp<
+        RootStackParamList,
+        "ReviewProduct"
+      >
+    >();
 
-  function resetReview() {
-    setReview(null);
-  }
+  const {
+    profiles = [],
+    healthConsiderations = [],
+  } = route.params ?? {};
+
+  const [imageUri, setImageUri] =
+    useState<string | null>(null);
+
+  const [isProcessing, setIsProcessing] =
+    useState(false);
 
   async function processImage(uri: string) {
-    setReview(null);
+    setImageUri(uri);
     setIsProcessing(true);
 
     try {
-      const ocr = await OCRService.extractText(uri);
+      const ocr =
+        await OCRService.extractText(uri);
 
       if (!ocr.success) {
+        Alert.alert(
+          "Ingredients Not Clear",
+          "We couldn't read the ingredients clearly. Please take another photo with the ingredient list in focus."
+        );
+
+        setIsProcessing(false);
         return;
       }
 
-      const result = await ReviewService.review({
-        ingredients: ocr.text,
-        people: ["Me"],
-        healthConsiderations: ["Pregnancy"],
-      });
+      const review =
+        await ReviewService.review({
+          ingredients: ocr.text,
+          people: profiles,
+          healthConsiderations,
+        });
 
-      setReview(result);
+      Alert.alert(
+        review.verdict,
+        review.summary.join("\n")
+      );
     } catch (error) {
-      console.error("Review error:", error);
+      console.error(error);
+
+      Alert.alert(
+        "Connection Error",
+        "Unable to review this product."
+      );
     } finally {
       setIsProcessing(false);
     }
@@ -58,20 +86,28 @@ export default function ReviewProductScreen() {
       await ImagePicker.requestCameraPermissionsAsync();
 
     if (!permission.granted) {
+      Alert.alert(
+        "Camera Permission",
+        "ShopWise needs camera access to review product ingredients."
+      );
+
       return;
     }
 
-    const result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ["images"],
-      allowsEditing: false,
-      quality: 1,
-    });
+    const result =
+      await ImagePicker.launchCameraAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 1,
+      });
 
     if (result.canceled) {
       return;
     }
 
-    await processImage(result.assets[0].uri);
+    await processImage(
+      result.assets[0].uri
+    );
   }
 
   async function handleChooseFromGallery() {
@@ -79,6 +115,11 @@ export default function ReviewProductScreen() {
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
+      Alert.alert(
+        "Photo Library Permission",
+        "ShopWise needs access to your photos to review product ingredients."
+      );
+
       return;
     }
 
@@ -93,113 +134,41 @@ export default function ReviewProductScreen() {
       return;
     }
 
-    await processImage(result.assets[0].uri);
+    await processImage(
+      result.assets[0].uri
+    );
   }
-
-  const verdict = review?.verdict?.toUpperCase() ?? "";
-
-  const isGood = verdict === "RECOMMENDED";
-  const isCaution = verdict === "NOT RECOMMENDED";
-
-  const statusLabel = isGood
-    ? "Looks Good"
-    : isCaution
-      ? "Be Cautious"
-      : "Worth Considering";
-
-  const statusColor = isGood
-    ? Colors.success
-    : isCaution
-      ? Colors.danger
-      : Colors.warning;
 
   return (
     <SafeAreaView style={styles.container}>
-      {!review ? (
-        <View style={styles.captureContent}>
-          <Text style={styles.title}>
-            Review Product
-          </Text>
+      <View style={styles.content}>
+        <Text style={styles.title}>
+          Review Product
+        </Text>
 
-          <Text style={styles.subtitle}>
-            Take a clear photo of the ingredients list.
-          </Text>
+        <Text style={styles.subtitle}>
+          Take a clear photo of the ingredients list.
+        </Text>
 
-          <PrimaryButton
-            title="Take Photo"
-            onPress={handleTakePhoto}
+        <PrimaryButton
+          title="Take Photo"
+          onPress={handleTakePhoto}
+        />
+
+        <View style={styles.gap} />
+
+        <PrimaryButton
+          title="Choose from Gallery"
+          onPress={handleChooseFromGallery}
+        />
+
+        {imageUri && (
+          <Image
+            source={{ uri: imageUri }}
+            style={styles.preview}
           />
-
-          <View style={styles.gap} />
-
-          <PrimaryButton
-            title="Choose from Gallery"
-            onPress={handleChooseFromGallery}
-          />
-        </View>
-      ) : (
-        <ScrollView
-          contentContainerStyle={styles.resultContent}
-          showsVerticalScrollIndicator={false}
-        >
-          <Text style={styles.resultTitle}>
-            Product Review
-          </Text>
-
-          <View
-            style={[
-              styles.statusCard,
-              { borderColor: statusColor },
-            ]}
-          >
-            <Text
-              style={[
-                styles.statusLabel,
-                { color: statusColor },
-              ]}
-            >
-              {statusLabel}
-            </Text>
-
-            <Text style={styles.statusSubtitle}>
-              Based on your considerations, if any
-            </Text>
-          </View>
-
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              Why?
-            </Text>
-
-            {review.summary.map((item, index) => (
-              <View
-                key={`${item}-${index}`}
-                style={styles.summaryRow}
-              >
-                <Text
-                  style={[
-                    styles.summaryBullet,
-                    { color: statusColor },
-                  ]}
-                >
-                  •
-                </Text>
-
-                <Text style={styles.summaryText}>
-                  {item}
-                </Text>
-              </View>
-            ))}
-          </View>
-
-          <View style={styles.buttonContainer}>
-            <PrimaryButton
-              title="Review Another Product"
-              onPress={resetReview}
-            />
-          </View>
-        </ScrollView>
-      )}
+        )}
+      </View>
 
       <ProcessingOverlay visible={isProcessing} />
     </SafeAreaView>
@@ -212,7 +181,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background,
   },
 
-  captureContent: {
+  content: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -220,10 +189,9 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: Typography.title,
+    fontSize: Typography.heading,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
-    textAlign: "center",
   },
 
   subtitle: {
@@ -238,76 +206,10 @@ const styles = StyleSheet.create({
     height: Spacing.md,
   },
 
-  resultContent: {
-    flexGrow: 1,
-    padding: Spacing.lg,
-    paddingBottom: Spacing.xxl,
-  },
-
-  resultTitle: {
-    fontSize: Typography.title,
-    fontWeight: Typography.weightBold,
-    color: Colors.textPrimary,
-    textAlign: "center",
-    marginBottom: Spacing.lg,
-  },
-
-  statusCard: {
-    backgroundColor: Colors.surface,
-    borderWidth: 2,
-    borderRadius: Radius.xl,
-    paddingVertical: Spacing.xl,
-    paddingHorizontal: Spacing.lg,
-    alignItems: "center",
-  },
-
-  statusLabel: {
-    fontSize: Typography.heading,
-    fontWeight: Typography.weightBold,
-    textAlign: "center",
-  },
-
-  statusSubtitle: {
-    marginTop: Spacing.sm,
-    color: Colors.textSecondary,
-    fontSize: Typography.body,
-    textAlign: "center",
-    lineHeight: 22,
-  },
-
-  section: {
+  preview: {
     marginTop: Spacing.xl,
-  },
-
-  sectionTitle: {
-    fontSize: Typography.subheading,
-    fontWeight: Typography.weightBold,
-    color: Colors.textPrimary,
-    marginBottom: Spacing.md,
-  },
-
-  summaryRow: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    marginBottom: Spacing.md,
-  },
-
-  summaryBullet: {
-    fontSize: 22,
-    lineHeight: 23,
-    marginRight: Spacing.sm,
-  },
-
-  summaryText: {
-    flex: 1,
-    color: Colors.textSecondary,
-    fontSize: Typography.body,
-    lineHeight: 24,
-  },
-
-  buttonContainer: {
-    marginTop: "auto",
-    paddingTop: Spacing.xl,
-    alignItems: "center",
+    width: 250,
+    height: 350,
+    borderRadius: 12,
   },
 });

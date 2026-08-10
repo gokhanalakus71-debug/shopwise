@@ -16,20 +16,25 @@ export type RootStackParamList = {
 
   Login: undefined;
 
-  Home: {
-    newProfile?: string;
-    editedProfile?: {
-      oldName: string;
-      newName: string;
-    };
-    newHealthConsideration?: string;
-    editedHealthConsideration?: {
-      oldName: string;
-      newName: string;
-    };
-  };
+  Home:
+    | {
+        newProfile?: string;
+        editedProfile?: {
+          oldName: string;
+          newName: string;
+        };
+        newHealthConsideration?: string;
+        editedHealthConsideration?: {
+          oldName: string;
+          newName: string;
+        };
+      }
+    | undefined;
 
-  ReviewProduct: undefined;
+  ReviewProduct: {
+    profiles: string[];
+    healthConsiderations: string[];
+  };
 
   AddProfile: {
     profile?: string;
