@@ -12,12 +12,15 @@ import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
 import ReviewService from "../services/ReviewService";
 import OCRService from "../services/OCRService";
+import ProcessingOverlay from "../components/ProcessingOverlay";
 
 export default function ReviewProductScreen() {
   const [imageUri, setImageUri] = useState<string | null>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   async function processImage(uri: string) {
     setImageUri(uri);
+    setIsProcessing(true);
 
     try {
       const ocr = await OCRService.extractText(uri);
@@ -47,6 +50,8 @@ export default function ReviewProductScreen() {
         "Connection Error",
         "Unable to review this product."
       );
+    } finally {
+      setIsProcessing(false);
     }
   }
 
@@ -127,6 +132,8 @@ export default function ReviewProductScreen() {
           />
         )}
       </View>
+
+      <ProcessingOverlay visible={isProcessing} />
     </SafeAreaView>
   );
 }
