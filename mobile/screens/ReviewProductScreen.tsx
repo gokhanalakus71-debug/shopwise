@@ -98,23 +98,20 @@ export default function ReviewProductScreen() {
 
   const verdict = review?.verdict?.toUpperCase() ?? "";
 
-  const isRecommended =
-    verdict === "RECOMMENDED";
+  const isGood = verdict === "RECOMMENDED";
+  const isCaution = verdict === "NOT RECOMMENDED";
 
-  const isNotRecommended =
-    verdict === "NOT RECOMMENDED";
+  const statusLabel = isGood
+    ? "Looks Good"
+    : isCaution
+      ? "Be Cautious"
+      : "Worth Considering";
 
-  const verdictColor = isRecommended
+  const statusColor = isGood
     ? Colors.success
-    : isNotRecommended
+    : isCaution
       ? Colors.danger
       : Colors.warning;
-
-  const verdictIcon = isRecommended
-    ? "✓"
-    : isNotRecommended
-      ? "!"
-      : "?";
 
   return (
     <SafeAreaView style={styles.container}>
@@ -151,36 +148,21 @@ export default function ReviewProductScreen() {
 
           <View
             style={[
-              styles.verdictCard,
-              { borderColor: verdictColor },
+              styles.statusCard,
+              { borderColor: statusColor },
             ]}
           >
-            <View
-              style={[
-                styles.verdictIcon,
-                { backgroundColor: verdictColor },
-              ]}
-            >
-              <Text style={styles.verdictIconText}>
-                {verdictIcon}
-              </Text>
-            </View>
-
             <Text
               style={[
-                styles.verdict,
-                { color: verdictColor },
+                styles.statusLabel,
+                { color: statusColor },
               ]}
             >
-              {verdict}
+              {statusLabel}
             </Text>
 
-            <Text style={styles.verdictSubtitle}>
-              {isRecommended
-                ? "Looks suitable for you"
-                : isNotRecommended
-                  ? "We found something you should know"
-                  : "There are some things worth considering"}
+            <Text style={styles.statusSubtitle}>
+              Based on your considerations, if any
             </Text>
           </View>
 
@@ -197,7 +179,7 @@ export default function ReviewProductScreen() {
                 <Text
                   style={[
                     styles.summaryBullet,
-                    { color: verdictColor },
+                    { color: statusColor },
                   ]}
                 >
                   •
@@ -270,36 +252,22 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
 
-  verdictCard: {
+  statusCard: {
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderRadius: Radius.xl,
-    padding: Spacing.xl,
+    paddingVertical: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
     alignItems: "center",
   },
 
-  verdictIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: Radius.round,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-
-  verdictIconText: {
-    color: "#FFFFFF",
-    fontSize: 32,
-    fontWeight: Typography.weightBold,
-  },
-
-  verdict: {
-    marginTop: Spacing.md,
+  statusLabel: {
     fontSize: Typography.heading,
     fontWeight: Typography.weightBold,
     textAlign: "center",
   },
 
-  verdictSubtitle: {
+  statusSubtitle: {
     marginTop: Spacing.sm,
     color: Colors.textSecondary,
     fontSize: Typography.body,
