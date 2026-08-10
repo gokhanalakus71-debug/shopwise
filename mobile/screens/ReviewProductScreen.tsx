@@ -22,6 +22,14 @@ export default function ReviewProductScreen() {
     try {
       const ocr = await OCRService.extractText(uri);
 
+      if (!ocr.success) {
+        Alert.alert(
+          "Ingredients Not Clear",
+          "We couldn't read the ingredients clearly. Please take another photo with the ingredient list in focus."
+        );
+        return;
+      }
+
       const review = await ReviewService.review({
         ingredients: ocr.text,
         people: ["Me"],
