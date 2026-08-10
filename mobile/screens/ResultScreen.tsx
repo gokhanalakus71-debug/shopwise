@@ -1,7 +1,4 @@
-import {
-  SafeAreaView,
-} from "react-native-safe-area-context";
-
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Alert,
   Share,
@@ -9,7 +6,6 @@ import {
   Text,
   View,
 } from "react-native";
-
 import {
   useNavigation,
   useRoute,
@@ -41,12 +37,7 @@ export default function ResultScreen() {
       >
     >();
 
-  const {
-    verdict,
-    summary,
-    profiles,
-    healthConsiderations,
-  } = route.params;
+  const { verdict, summary } = route.params;
 
   const isRecommended =
     verdict === "RECOMMENDED";
@@ -76,7 +67,7 @@ export default function ResultScreen() {
     .map((item) => `• ${item}`)
     .join("\n");
 
-  async function handleShareWhy() {
+  async function handleShare() {
     try {
       await Share.share({
         message: `ShopWise — Why?\n\n${whyText}`,
@@ -119,30 +110,6 @@ export default function ResultScreen() {
             Based on your considerations, if any
           </Text>
 
-          {profiles.length > 0 && (
-            <>
-              <Text style={styles.heading}>
-                For
-              </Text>
-
-              <Text style={styles.item}>
-                {profiles.join(" • ")}
-              </Text>
-            </>
-          )}
-
-          {healthConsiderations.length > 0 && (
-            <>
-              <Text style={styles.heading}>
-                Considerations
-              </Text>
-
-              <Text style={styles.item}>
-                {healthConsiderations.join(" • ")}
-              </Text>
-            </>
-          )}
-
           <Text style={styles.heading}>
             Why?
           </Text>
@@ -153,8 +120,8 @@ export default function ResultScreen() {
 
           <View style={styles.shareContainer}>
             <PrimaryButton
-              title="Copy / Share Why"
-              onPress={handleShareWhy}
+              title="Share"
+              onPress={handleShare}
             />
           </View>
         </View>
@@ -207,11 +174,6 @@ const styles = StyleSheet.create({
     fontSize: Typography.body,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
-  },
-
-  item: {
-    fontSize: Typography.body,
-    color: Colors.textSecondary,
   },
 
   why: {
