@@ -26,8 +26,7 @@ import {
 } from "../navigation/AppNavigator";
 
 export default function ResultScreen() {
-  const navigation =
-    useNavigation<AppNavigation>();
+  const navigation = useNavigation<AppNavigation>();
 
   const route =
     useRoute<
@@ -98,22 +97,20 @@ export default function ResultScreen() {
             },
           ]}
         >
-          <View style={styles.header}>
-            <Text
-              style={[
-                styles.verdict,
-                {
-                  color: titleColor,
-                },
-              ]}
-            >
-              {indicator} {title}
-            </Text>
+          <Text
+            style={[
+              styles.verdict,
+              {
+                color: titleColor,
+              },
+            ]}
+          >
+            {indicator} {title}
+          </Text>
 
-            <Text style={styles.context}>
-              Based on your considerations, if any
-            </Text>
-          </View>
+          <Text style={styles.context}>
+            Based on your considerations, if any
+          </Text>
 
           <View style={styles.divider} />
 
@@ -172,10 +169,6 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
-  },
-
-  header: {
-    alignItems: "flex-start",
   },
 
   verdict: {
