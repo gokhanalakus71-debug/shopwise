@@ -1,6 +1,5 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
-  Alert,
   Image,
   StyleSheet,
   Text,
@@ -8,7 +7,7 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { useState } from "react";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { Colors, Spacing, Typography } from "../theme";
 import PrimaryButton from "../components/PrimaryButton";
@@ -17,10 +16,14 @@ import ReviewService from "../services/ReviewService";
 import OCRService from "../services/OCRService";
 
 import {
+  AppNavigation,
   RootStackParamList,
 } from "../navigation/AppNavigator";
 
 export default function ReviewProductScreen() {
+  const navigation =
+    useNavigation<AppNavigation>();
+
   const route =
     useRoute<
       import("@react-navigation/native").RouteProp<
@@ -49,12 +52,8 @@ export default function ReviewProductScreen() {
         await OCRService.extractText(uri);
 
       if (!ocr.success) {
-        Alert.alert(
-          "Ingredients Not Clear",
-          "We couldn't read the ingredients clearly. Please take another photo with the ingredient list in focus."
-        );
-
         setIsProcessing(false);
+
         return;
       }
 
@@ -65,18 +64,20 @@ export default function ReviewProductScreen() {
           healthConsiderations,
         });
 
-      Alert.alert(
-        review.verdict,
-        review.summary.join("\n")
-      );
-    } catch (error) {
-      console.error(error);
+      setIsProcessing(false);
 
-      Alert.alert(
-        "Connection Error",
-        "Unable to review this product."
+      navigation.navigate("Result", {
+        verdict: review.verdict,
+        summary: review.summary,
+        profiles,
+        healthConsiderations,
+      });
+    } catch (error) {
+      console.error(
+        "Product review error:",
+        error
       );
-    } finally {
+
       setIsProcessing(false);
     }
   }
@@ -86,11 +87,6 @@ export default function ReviewProductScreen() {
       await ImagePicker.requestCameraPermissionsAsync();
 
     if (!permission.granted) {
-      Alert.alert(
-        "Camera Permission",
-        "ShopWise needs camera access to review product ingredients."
-      );
-
       return;
     }
 
@@ -115,11 +111,6 @@ export default function ReviewProductScreen() {
       await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permission.granted) {
-      Alert.alert(
-        "Photo Library Permission",
-        "ShopWise needs access to your photos to review product ingredients."
-      );
-
       return;
     }
 
@@ -159,7 +150,9 @@ export default function ReviewProductScreen() {
 
         <PrimaryButton
           title="Choose from Gallery"
-          onPress={handleChooseFromGallery}
+          onPress={
+            handleChooseFromGallery
+          }
         />
 
         {imageUri && (
@@ -170,7 +163,9 @@ export default function ReviewProductScreen() {
         )}
       </View>
 
-      <ProcessingOverlay visible={isProcessing} />
+      <ProcessingOverlay
+        visible={isProcessing}
+      />
     </SafeAreaView>
   );
 }

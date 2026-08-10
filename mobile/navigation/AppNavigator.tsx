@@ -8,6 +8,7 @@ import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ReviewProductScreen from "../screens/ReviewProductScreen";
+import ResultScreen from "../screens/ResultScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
 import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
 
@@ -36,6 +37,13 @@ export type RootStackParamList = {
     healthConsiderations: string[];
   };
 
+  Result: {
+    verdict: string;
+    summary: string[];
+    profiles: string[];
+    healthConsiderations: string[];
+  };
+
   AddProfile: {
     profile?: string;
   };
@@ -45,7 +53,8 @@ export type RootStackParamList = {
   };
 };
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack =
+  createNativeStackNavigator<RootStackParamList>();
 
 export default function AppNavigator() {
   return (
@@ -74,6 +83,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="ReviewProduct"
           component={ReviewProductScreen}
+        />
+
+        <Stack.Screen
+          name="Result"
+          component={ResultScreen}
         />
 
         <Stack.Screen
