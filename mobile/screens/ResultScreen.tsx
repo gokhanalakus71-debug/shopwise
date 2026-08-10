@@ -1,6 +1,8 @@
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Alert,
+  Pressable,
+  ScrollView,
   Share,
   StyleSheet,
   Text,
@@ -17,8 +19,6 @@ import {
   Spacing,
   Typography,
 } from "../theme";
-
-import PrimaryButton from "../components/PrimaryButton";
 
 import {
   AppNavigation,
@@ -65,7 +65,7 @@ export default function ResultScreen() {
 
   const whyText = summary
     .map((item) => `• ${item}`)
-    .join("\n");
+    .join("\n\n");
 
   async function handleShare() {
     try {
@@ -86,7 +86,10 @@ export default function ResultScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.content}
+      >
         <View
           style={[
             styles.resultCard,
@@ -95,20 +98,24 @@ export default function ResultScreen() {
             },
           ]}
         >
-          <Text
-            style={[
-              styles.verdict,
-              {
-                color: titleColor,
-              },
-            ]}
-          >
-            {indicator} {title}
-          </Text>
+          <View style={styles.header}>
+            <Text
+              style={[
+                styles.verdict,
+                {
+                  color: titleColor,
+                },
+              ]}
+            >
+              {indicator} {title}
+            </Text>
 
-          <Text style={styles.context}>
-            Based on your considerations, if any
-          </Text>
+            <Text style={styles.context}>
+              Based on your considerations, if any
+            </Text>
+          </View>
+
+          <View style={styles.divider} />
 
           <Text style={styles.heading}>
             Why?
@@ -118,21 +125,30 @@ export default function ResultScreen() {
             {whyText}
           </Text>
 
-          <View style={styles.shareContainer}>
-            <PrimaryButton
-              title="Share"
-              onPress={handleShare}
-            />
-          </View>
+          <Pressable
+            style={[
+              styles.shareButton,
+              {
+                backgroundColor: titleColor,
+              },
+            ]}
+            onPress={handleShare}
+          >
+            <Text style={styles.shareButtonText}>
+              Share
+            </Text>
+          </Pressable>
         </View>
 
-        <View style={styles.reviewAgain}>
-          <PrimaryButton
-            title="Review Another Product"
-            onPress={handleReviewAnother}
-          />
-        </View>
-      </View>
+        <Pressable
+          style={styles.reviewButton}
+          onPress={handleReviewAnother}
+        >
+          <Text style={styles.reviewButtonText}>
+            Review Another Product
+          </Text>
+        </Pressable>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -144,16 +160,22 @@ const styles = StyleSheet.create({
   },
 
   content: {
-    flex: 1,
-    padding: Spacing.lg,
-    justifyContent: "center",
+    flexGrow: 1,
+    paddingHorizontal: Spacing.lg,
+    paddingTop: Spacing.lg,
+    paddingBottom: Spacing.xxl,
   },
 
   resultCard: {
+    width: "100%",
     backgroundColor: Colors.surface,
     borderWidth: 2,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
+  },
+
+  header: {
+    alignItems: "flex-start",
   },
 
   verdict: {
@@ -165,15 +187,21 @@ const styles = StyleSheet.create({
   context: {
     fontSize: Typography.small,
     color: Colors.textSecondary,
-    marginBottom: Spacing.md,
+    lineHeight: 20,
+  },
+
+  divider: {
+    height: 1,
+    backgroundColor: Colors.border,
+    marginTop: Spacing.lg,
+    marginBottom: Spacing.lg,
   },
 
   heading: {
-    marginTop: Spacing.md,
-    marginBottom: Spacing.sm,
-    fontSize: Typography.body,
+    fontSize: Typography.subheading,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
+    marginBottom: Spacing.sm,
   },
 
   why: {
@@ -182,11 +210,34 @@ const styles = StyleSheet.create({
     color: Colors.textSecondary,
   },
 
-  shareContainer: {
+  shareButton: {
     marginTop: Spacing.lg,
+    minHeight: 52,
+    borderRadius: Radius.lg,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
   },
 
-  reviewAgain: {
+  shareButtonText: {
+    color: "#FFFFFF",
+    fontSize: Typography.body,
+    fontWeight: Typography.weightBold,
+  },
+
+  reviewButton: {
     marginTop: Spacing.lg,
+    minHeight: 52,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.primary,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
+  },
+
+  reviewButtonText: {
+    color: "#FFFFFF",
+    fontSize: Typography.body,
+    fontWeight: Typography.weightBold,
   },
 });
