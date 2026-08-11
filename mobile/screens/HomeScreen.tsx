@@ -356,12 +356,14 @@ export default function HomeScreen() {
             navigation.navigate("ReviewProduct", {
               profiles: selectedProfiles,
               healthConsiderations: selectedHealth,
+              mode: "camera",
             })
           }
           onSecondaryPress={() =>
             navigation.navigate("ReviewProduct", {
               profiles: selectedProfiles,
               healthConsiderations: selectedHealth,
+              mode: "gallery",
             })
           }
         />

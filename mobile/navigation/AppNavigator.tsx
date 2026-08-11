@@ -35,10 +35,11 @@ export type RootStackParamList = {
   ReviewProduct: {
     profiles: string[];
     healthConsiderations: string[];
+    mode?: "camera" | "gallery";
   };
 
   Result: {
-    verdict: string;
+    verdict: "RECOMMENDED" | "MIXED" | "NOT RECOMMENDED";
     summary: string[];
     profiles: string[];
     healthConsiderations: string[];
