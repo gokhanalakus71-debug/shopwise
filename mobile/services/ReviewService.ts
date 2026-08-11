@@ -7,7 +7,7 @@ export interface ReviewRequest {
 }
 
 export interface ReviewResponse {
-  verdict: string;
+  verdict: "RECOMMENDED" | "MIXED" | "NOT RECOMMENDED";
   summary: string[];
 }
 
@@ -27,7 +27,19 @@ class ReviewService {
       throw new Error("Review request failed.");
     }
 
-    return response.json();
+    const data = await response.json();
+
+    return {
+      verdict: String(data.verdict)
+        .trim()
+        .toUpperCase() as ReviewResponse["verdict"],
+
+      summary: Array.isArray(data.summary)
+        ? data.summary.map((item: unknown) =>
+            String(item).trim()
+          )
+        : [],
+    };
   }
 }
 
