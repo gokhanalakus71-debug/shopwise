@@ -7,7 +7,6 @@ import {
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
 import HomeScreen from "../screens/HomeScreen";
-import ReviewProductScreen from "../screens/ReviewProductScreen";
 import ResultScreen from "../screens/ResultScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
 import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
@@ -31,12 +30,6 @@ export type RootStackParamList = {
         };
       }
     | undefined;
-
-  ReviewProduct: {
-    profiles: string[];
-    healthConsiderations: string[];
-    mode?: "camera" | "gallery";
-  };
 
   Result: {
     verdict: "RECOMMENDED" | "MIXED" | "NOT RECOMMENDED";
@@ -79,11 +72,6 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
-        />
-
-        <Stack.Screen
-          name="ReviewProduct"
-          component={ReviewProductScreen}
         />
 
         <Stack.Screen

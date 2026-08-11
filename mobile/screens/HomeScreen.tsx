@@ -7,6 +7,7 @@ import {
   Text,
   View,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { Colors, Spacing, Typography } from "../theme";
@@ -19,6 +20,10 @@ import BottomNavigation from "../components/BottomNavigation";
 import SelectionChip from "../components/SelectionChip";
 import SectionHeader from "../components/SectionHeader";
 import ActionCard from "../components/ActionCard";
+import ProcessingOverlay from "../components/ProcessingOverlay";
+
+import ReviewService from "../services/ReviewService";
+import OCRService from "../services/OCRService";
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
@@ -50,6 +55,9 @@ export default function HomeScreen() {
   const [selectedHealth, setSelectedHealth] = useState([
     "Pregnancy",
   ]);
+
+  const [isProcessing, setIsProcessing] =
+    useState(false);
 
   useEffect(() => {
     const newProfile = route.params?.newProfile;
@@ -227,6 +235,105 @@ export default function HomeScreen() {
     });
   }
 
+  async function processImage(uri: string) {
+    setIsProcessing(true);
+
+    try {
+      const ocr =
+        await OCRService.extractText(uri);
+
+      if (!ocr.success) {
+        Alert.alert(
+          "Couldn't Read Ingredients",
+          "Please try taking a clearer photo of the ingredient list."
+        );
+        return;
+      }
+
+      const review =
+        await ReviewService.review({
+          ingredients: ocr.text,
+          people: selectedProfiles,
+          healthConsiderations: selectedHealth,
+        });
+
+      navigation.navigate("Result", {
+        verdict: review.verdict,
+        summary: review.summary,
+        profiles: selectedProfiles,
+        healthConsiderations: selectedHealth,
+      });
+    } catch (error) {
+      console.error(
+        "Product review error:",
+        error
+      );
+
+      Alert.alert(
+        "Something Went Wrong",
+        "We couldn't review this product. Please try again."
+      );
+    } finally {
+      setIsProcessing(false);
+    }
+  }
+
+  async function handleTakePhoto() {
+    const permission =
+      await ImagePicker.requestCameraPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Camera Permission",
+        "ShopWise needs camera access to photograph the ingredient list."
+      );
+      return;
+    }
+
+    const result =
+      await ImagePicker.launchCameraAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 1,
+      });
+
+    if (result.canceled) {
+      return;
+    }
+
+    await processImage(
+      result.assets[0].uri
+    );
+  }
+
+  async function handleChooseFromGallery() {
+    const permission =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permission.granted) {
+      Alert.alert(
+        "Gallery Permission",
+        "ShopWise needs access to your photos so you can choose an ingredient list."
+      );
+      return;
+    }
+
+    const result =
+      await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ["images"],
+        allowsEditing: false,
+        quality: 1,
+      });
+
+    if (result.canceled) {
+      return;
+    }
+
+    await processImage(
+      result.assets[0].uri
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -352,24 +459,16 @@ export default function HomeScreen() {
           description="Take a clear photo of the ingredient list or choose one from your gallery."
           primaryTitle="📷 Take Photo"
           secondaryTitle="🖼️ Choose From Gallery"
-          onPrimaryPress={() =>
-            navigation.navigate("ReviewProduct", {
-              profiles: selectedProfiles,
-              healthConsiderations: selectedHealth,
-              mode: "camera",
-            })
-          }
-          onSecondaryPress={() =>
-            navigation.navigate("ReviewProduct", {
-              profiles: selectedProfiles,
-              healthConsiderations: selectedHealth,
-              mode: "gallery",
-            })
-          }
+          onPrimaryPress={handleTakePhoto}
+          onSecondaryPress={handleChooseFromGallery}
         />
       </ScrollView>
 
       <BottomNavigation />
+
+      <ProcessingOverlay
+        visible={isProcessing}
+      />
     </SafeAreaView>
   );
 }
