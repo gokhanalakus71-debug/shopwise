@@ -96,9 +96,10 @@ export default function ReviewProductScreen() {
         quality: 1,
       });
 
-    if (result.canceled) {
-      return;
-    }
+  if (result.canceled) {
+    navigation.goBack();
+    return;
+  }
 
     await processImage(
       result.assets[0].uri
@@ -121,6 +122,7 @@ export default function ReviewProductScreen() {
       });
 
     if (result.canceled) {
+      navigation.goBack();
       return;
     }
 
