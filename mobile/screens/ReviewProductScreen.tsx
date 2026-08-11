@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Image,
@@ -6,7 +7,6 @@ import {
   View,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 
 import { Colors, Spacing, Typography } from "../theme";
@@ -21,8 +21,7 @@ import {
 } from "../navigation/AppNavigator";
 
 export default function ReviewProductScreen() {
-  const navigation =
-    useNavigation<AppNavigation>();
+  const navigation = useNavigation<AppNavigation>();
 
   const route =
     useRoute<
@@ -35,6 +34,7 @@ export default function ReviewProductScreen() {
   const {
     profiles = [],
     healthConsiderations = [],
+    mode,
   } = route.params ?? {};
 
   const [imageUri, setImageUri] =
@@ -53,7 +53,6 @@ export default function ReviewProductScreen() {
 
       if (!ocr.success) {
         setIsProcessing(false);
-
         return;
       }
 
@@ -130,6 +129,16 @@ export default function ReviewProductScreen() {
     );
   }
 
+  useEffect(() => {
+    if (mode === "camera") {
+      handleTakePhoto();
+    }
+
+    if (mode === "gallery") {
+      handleChooseFromGallery();
+    }
+  }, [mode]);
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -150,9 +159,7 @@ export default function ReviewProductScreen() {
 
         <PrimaryButton
           title="Choose from Gallery"
-          onPress={
-            handleChooseFromGallery
-          }
+          onPress={handleChooseFromGallery}
         />
 
         {imageUri && (
