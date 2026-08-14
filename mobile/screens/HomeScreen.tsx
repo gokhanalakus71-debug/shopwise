@@ -23,7 +23,6 @@ import ActionCard from "../components/ActionCard";
 import ProcessingOverlay from "../components/ProcessingOverlay";
 
 import ReviewService from "../services/ReviewService";
-import OCRService from "../services/OCRService";
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
@@ -239,20 +238,9 @@ export default function HomeScreen() {
     setIsProcessing(true);
 
     try {
-      const ocr =
-        await OCRService.extractText(uri);
-
-      if (!ocr.success) {
-        Alert.alert(
-          "Couldn't Read Ingredients",
-          "Please try taking a clearer photo of the ingredient list."
-        );
-        return;
-      }
-
       const review =
         await ReviewService.review({
-          ingredients: ocr.text,
+          imageUri: uri,
           people: selectedProfiles,
           healthConsiderations: selectedHealth,
         });
