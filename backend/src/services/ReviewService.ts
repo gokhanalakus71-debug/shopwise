@@ -1,4 +1,3 @@
-import { ReviewRequest } from "../models/ReviewRequest.js";
 import { ReviewResponse } from "../models/ReviewResponse.js";
 
 import OpenAIService from "./OpenAIService.js";
@@ -12,19 +11,6 @@ export interface ImageReviewRequest {
 }
 
 class ReviewService {
-  async review(
-    request: ReviewRequest
-  ): Promise<ReviewResponse> {
-    const prompt = buildProductReviewPrompt(
-      request.people,
-      request.healthConsiderations
-    );
-
-    const response = await OpenAIService.review(prompt);
-
-    return JSON.parse(response) as ReviewResponse;
-  }
-
   async reviewImage(
     request: ImageReviewRequest
   ): Promise<ReviewResponse> {
