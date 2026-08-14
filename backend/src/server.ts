@@ -3,7 +3,6 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import reviewRouter from "./routes/review.js";
-import ocrRouter from "./routes/ocr.js";
 
 dotenv.config();
 
@@ -20,7 +19,6 @@ app.get("/", (_, res) => {
 });
 
 app.use("/review", reviewRouter);
-app.use("/ocr", ocrRouter);
 const PORT = Number(process.env.PORT) || 3000;
 
 app.listen(PORT, () => {
