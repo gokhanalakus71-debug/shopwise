@@ -23,6 +23,7 @@ import ActionCard from "../components/ActionCard";
 import ProcessingOverlay from "../components/ProcessingOverlay";
 
 import ReviewService from "../services/ReviewService";
+import UserDataService from "../services/firebase/UserDataService";
 
 export default function HomeScreen() {
   const navigation = useNavigation<AppNavigation>();
@@ -57,6 +58,37 @@ export default function HomeScreen() {
 
   const [isProcessing, setIsProcessing] =
     useState(false);
+
+  useEffect(() => {
+    async function loadUserData() {
+      try {
+        const data =
+          await UserDataService.loadUserData();
+
+        if (!data) {
+          return;
+        }
+
+        setProfiles(data.profiles);
+        setHealthConsiderations(
+          data.healthConsiderations
+        );
+        setSelectedProfiles(
+          data.selectedProfiles
+        );
+        setSelectedHealth(
+          data.selectedHealth
+        );
+      } catch (error) {
+        console.error(
+          "Failed to load user data:",
+          error
+        );
+      }
+    }
+
+    loadUserData();
+  }, []);
 
   useEffect(() => {
     const newProfile = route.params?.newProfile;
