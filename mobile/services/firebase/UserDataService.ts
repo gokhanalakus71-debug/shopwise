@@ -14,6 +14,27 @@ export interface UserData {
   selectedHealth: string[];
 }
 
+const DEFAULT_USER_DATA: UserData = {
+  profiles: [
+    "Me",
+    "Child 1",
+    "Husband",
+  ],
+
+  healthConsiderations: [
+    "Pregnancy",
+    "Gluten Intolerance",
+  ],
+
+  selectedProfiles: [
+    "Me",
+  ],
+
+  selectedHealth: [
+    "Pregnancy",
+  ],
+};
+
 class UserDataService {
   private getUserDocument() {
     const user = AuthService.getCurrentUser();
@@ -22,7 +43,11 @@ class UserDataService {
       throw new Error("No authenticated user.");
     }
 
-    return doc(firestore, "users", user.uid);
+    return doc(
+      firestore,
+      "users",
+      user.uid
+    );
   }
 
   async loadUserData(): Promise<UserData | null> {
@@ -37,7 +62,25 @@ class UserDataService {
     return snapshot.data() as UserData;
   }
 
-  async saveUserData(data: UserData): Promise<void> {
+  async initializeUserData(): Promise<UserData> {
+    const existing =
+      await this.loadUserData();
+
+    if (existing) {
+      return existing;
+    }
+
+    await setDoc(
+      this.getUserDocument(),
+      DEFAULT_USER_DATA
+    );
+
+    return DEFAULT_USER_DATA;
+  }
+
+  async saveUserData(
+    data: UserData
+  ): Promise<void> {
     await setDoc(
       this.getUserDocument(),
       data,
