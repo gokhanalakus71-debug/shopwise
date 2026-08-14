@@ -12,6 +12,8 @@ import AppTextInput from "../components/AppTextInput";
 import PasswordInput from "../components/PasswordInput";
 import PrimaryButton from "../components/PrimaryButton";
 
+import AuthService from "../services/AuthService";
+
 import { Colors, Spacing, Typography } from "../theme";
 import { AppNavigation } from "../navigation/AppNavigator";
 
@@ -22,8 +24,9 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] =
     useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  function handleRegister() {
+  async function handleRegister() {
     const trimmedEmail = email.trim();
 
     if (!trimmedEmail || !password || !confirmPassword) {
@@ -42,10 +45,56 @@ export default function RegisterScreen() {
       return;
     }
 
-    Alert.alert(
-      "Coming Next",
-      "Firebase account registration will be connected in the next step."
-    );
+    setIsLoading(true);
+
+    try {
+      await AuthService.register(
+        trimmedEmail,
+        password
+      );
+
+      Alert.alert(
+        "Account Created",
+        "Your ShopWise account has been created.",
+        [
+          {
+            text: "Continue",
+            onPress: () =>
+              navigation.navigate("Home"),
+          },
+        ]
+      );
+    } catch (error: any) {
+      console.error(
+        "Registration error:",
+        error
+      );
+
+      let message =
+        "We couldn't create your account. Please try again.";
+
+      if (error?.code === "auth/email-already-in-use") {
+        message =
+          "An account with this email already exists.";
+      } else if (
+        error?.code === "auth/invalid-email"
+      ) {
+        message =
+          "Please enter a valid email address.";
+      } else if (
+        error?.code === "auth/weak-password"
+      ) {
+        message =
+          "Your password is too weak. Please choose a stronger password.";
+      }
+
+      Alert.alert(
+        "Create Account",
+        message
+      );
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -86,13 +135,19 @@ export default function RegisterScreen() {
         />
 
         <PrimaryButton
-          title="Create Account"
+          title={
+            isLoading
+              ? "Creating Account..."
+              : "Create Account"
+          }
           onPress={handleRegister}
         />
 
         <Text
           style={styles.link}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() =>
+            navigation.navigate("Login")
+          }
         >
           Already have an account? Login
         </Text>
