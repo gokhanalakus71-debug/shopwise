@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colors, Spacing, Typography } from "../theme";
@@ -44,9 +44,13 @@ export default function LoginScreen() {
           Forgot Password?
         </Text>
 
-        <Text style={styles.link}>
-          Create Account
-        </Text>
+        <Pressable
+          onPress={() => navigation.navigate("Register")}
+        >
+          <Text style={styles.link}>
+            Create Account
+          </Text>
+        </Pressable>
 
       </View>
     </SafeAreaView>

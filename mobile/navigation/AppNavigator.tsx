@@ -6,6 +6,7 @@ import {
 
 import WelcomeScreen from "../screens/WelcomeScreen";
 import LoginScreen from "../screens/LoginScreen";
+import RegisterScreen from "../screens/RegisterScreen";
 import HomeScreen from "../screens/HomeScreen";
 import ResultScreen from "../screens/ResultScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
@@ -15,6 +16,8 @@ export type RootStackParamList = {
   Welcome: undefined;
 
   Login: undefined;
+
+  Register: undefined;
 
   Home:
     | {
@@ -67,6 +70,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Login"
           component={LoginScreen}
+        />
+
+        <Stack.Screen
+          name="Register"
+          component={RegisterScreen}
         />
 
         <Stack.Screen
