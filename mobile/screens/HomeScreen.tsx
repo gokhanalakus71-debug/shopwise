@@ -63,11 +63,7 @@ export default function HomeScreen() {
     async function loadUserData() {
       try {
         const data =
-          await UserDataService.loadUserData();
-
-        if (!data) {
-          return;
-        }
+          await UserDataService.initializeUserData();
 
         setProfiles(data.profiles);
         setHealthConsiderations(
