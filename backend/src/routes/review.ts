@@ -4,9 +4,39 @@ import ReviewService from "../services/ReviewService.js";
 const router = Router();
 
 router.post("/", async (req, res) => {
-  const result = await ReviewService.review(req.body);
+  try {
+    const {
+      imageBase64,
+      mimeType,
+      people,
+      healthConsiderations,
+    } = req.body;
 
-  res.json(result);
+    if (!imageBase64) {
+      return res.status(400).json({
+        error: "Image is required.",
+      });
+    }
+
+    const result = await ReviewService.reviewImage({
+      imageBase64,
+      mimeType: mimeType || "image/jpeg",
+      people: Array.isArray(people) ? people : [],
+      healthConsiderations: Array.isArray(
+        healthConsiderations
+      )
+        ? healthConsiderations
+        : [],
+    });
+
+    res.json(result);
+  } catch (error) {
+    console.error("Review error:", error);
+
+    res.status(500).json({
+      error: "Unable to review the product.",
+    });
+  }
 });
 
 export default router;
