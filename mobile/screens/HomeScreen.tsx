@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Alert,
@@ -59,6 +59,42 @@ export default function HomeScreen() {
   const [isProcessing, setIsProcessing] =
     useState(false);
 
+  const [isUserDataLoaded, setIsUserDataLoaded] =
+    useState(false);
+
+  const isSaving = useRef(false);
+
+  async function persistUserData(
+    nextProfiles: string[],
+    nextHealthConsiderations: string[],
+    nextSelectedProfiles: string[],
+    nextSelectedHealth: string[]
+  ) {
+    isSaving.current = true;
+
+    try {
+      await UserDataService.saveUserData({
+        profiles: nextProfiles,
+        healthConsiderations:
+          nextHealthConsiderations,
+        selectedProfiles: nextSelectedProfiles,
+        selectedHealth: nextSelectedHealth,
+      });
+    } catch (error) {
+      console.error(
+        "Failed to save user data:",
+        error
+      );
+
+      Alert.alert(
+        "Unable to Save",
+        "Your changes could not be saved. Please try again."
+      );
+    } finally {
+      isSaving.current = false;
+    }
+  }
+
   useEffect(() => {
     async function loadUserData() {
       try {
@@ -75,10 +111,17 @@ export default function HomeScreen() {
         setSelectedHealth(
           data.selectedHealth
         );
+
+        setIsUserDataLoaded(true);
       } catch (error) {
         console.error(
           "Failed to load user data:",
           error
+        );
+
+        Alert.alert(
+          "Unable to Load Data",
+          "We couldn't load your ShopWise data. Please try again."
         );
       }
     }
@@ -87,156 +130,360 @@ export default function HomeScreen() {
   }, []);
 
   useEffect(() => {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
     const newProfile = route.params?.newProfile;
 
-    if (newProfile && !profiles.includes(newProfile)) {
-      setProfiles((current) => [...current, newProfile]);
+    if (!newProfile) {
+      return;
+    }
 
-      setSelectedProfiles((current) =>
-        current.includes(newProfile)
-          ? current
-          : [...current, newProfile]
-      );
+    const trimmedProfile = newProfile.trim();
 
+    if (!trimmedProfile) {
       navigation.setParams({
         newProfile: undefined,
       });
+      return;
     }
-  }, [route.params?.newProfile]);
 
-  useEffect(() => {
-    const editedProfile = route.params?.editedProfile;
-
-    if (editedProfile) {
-      setProfiles((current) => {
-        if (current.includes(editedProfile.oldName)) {
-          return current.map((profile) =>
-            profile === editedProfile.oldName
-              ? editedProfile.newName
-              : profile
-          );
-        }
-
-        return [...current, editedProfile.newName];
-      });
-
-      setSelectedProfiles((current) => {
-        if (current.includes(editedProfile.oldName)) {
-          return current.map((profile) =>
-            profile === editedProfile.oldName
-              ? editedProfile.newName
-              : profile
-          );
-        }
-
-        return current.includes(editedProfile.newName)
-          ? current
-          : [...current, editedProfile.newName];
-      });
-
+    if (profiles.includes(trimmedProfile)) {
       navigation.setParams({
-        editedProfile: undefined,
+        newProfile: undefined,
       });
+      return;
     }
-  }, [route.params?.editedProfile]);
+
+    const nextProfiles = [
+      ...profiles,
+      trimmedProfile,
+    ];
+
+    const nextSelectedProfiles =
+      selectedProfiles.includes(trimmedProfile)
+        ? selectedProfiles
+        : [
+            ...selectedProfiles,
+            trimmedProfile,
+          ];
+
+    setProfiles(nextProfiles);
+    setSelectedProfiles(nextSelectedProfiles);
+
+    navigation.setParams({
+      newProfile: undefined,
+    });
+
+    persistUserData(
+      nextProfiles,
+      healthConsiderations,
+      nextSelectedProfiles,
+      selectedHealth
+    );
+  }, [
+    isUserDataLoaded,
+    route.params?.newProfile,
+  ]);
 
   useEffect(() => {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
+    const editedProfile =
+      route.params?.editedProfile;
+
+    if (!editedProfile) {
+      return;
+    }
+
+    const nextProfiles = profiles.includes(
+      editedProfile.oldName
+    )
+      ? profiles.map((profile) =>
+          profile === editedProfile.oldName
+            ? editedProfile.newName
+            : profile
+        )
+      : [
+          ...profiles,
+          editedProfile.newName,
+        ];
+
+    const nextSelectedProfiles =
+      selectedProfiles.includes(
+        editedProfile.oldName
+      )
+        ? selectedProfiles.map((profile) =>
+            profile === editedProfile.oldName
+              ? editedProfile.newName
+              : profile
+          )
+        : selectedProfiles.includes(
+              editedProfile.newName
+            )
+          ? selectedProfiles
+          : [
+              ...selectedProfiles,
+              editedProfile.newName,
+            ];
+
+    setProfiles(nextProfiles);
+    setSelectedProfiles(
+      nextSelectedProfiles
+    );
+
+    navigation.setParams({
+      editedProfile: undefined,
+    });
+
+    persistUserData(
+      nextProfiles,
+      healthConsiderations,
+      nextSelectedProfiles,
+      selectedHealth
+    );
+  }, [
+    isUserDataLoaded,
+    route.params?.editedProfile,
+  ]);
+
+  useEffect(() => {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
     const newHealthConsideration =
       route.params?.newHealthConsideration;
 
-    if (
-      newHealthConsideration &&
-      !healthConsiderations.includes(newHealthConsideration)
-    ) {
-      setHealthConsiderations((current) => [
-        ...current,
-        newHealthConsideration,
-      ]);
-
-      setSelectedHealth((current) =>
-        current.includes(newHealthConsideration)
-          ? current
-          : [...current, newHealthConsideration]
-      );
-
-      navigation.setParams({
-        newHealthConsideration: undefined,
-      });
+    if (!newHealthConsideration) {
+      return;
     }
-  }, [route.params?.newHealthConsideration]);
+
+    const trimmedConsideration =
+      newHealthConsideration.trim();
+
+    if (!trimmedConsideration) {
+      navigation.setParams({
+        newHealthConsideration:
+          undefined,
+      });
+      return;
+    }
+
+    if (
+      healthConsiderations.includes(
+        trimmedConsideration
+      )
+    ) {
+      navigation.setParams({
+        newHealthConsideration:
+          undefined,
+      });
+      return;
+    }
+
+    const nextHealthConsiderations = [
+      ...healthConsiderations,
+      trimmedConsideration,
+    ];
+
+    const nextSelectedHealth =
+      selectedHealth.includes(
+        trimmedConsideration
+      )
+        ? selectedHealth
+        : [
+            ...selectedHealth,
+            trimmedConsideration,
+          ];
+
+    setHealthConsiderations(
+      nextHealthConsiderations
+    );
+    setSelectedHealth(
+      nextSelectedHealth
+    );
+
+    navigation.setParams({
+      newHealthConsideration:
+        undefined,
+    });
+
+    persistUserData(
+      profiles,
+      nextHealthConsiderations,
+      selectedProfiles,
+      nextSelectedHealth
+    );
+  }, [
+    isUserDataLoaded,
+    route.params?.newHealthConsideration,
+  ]);
 
   useEffect(() => {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
     const editedHealthConsideration =
       route.params?.editedHealthConsideration;
 
-    if (editedHealthConsideration) {
-      setHealthConsiderations((current) => {
-        if (current.includes(editedHealthConsideration.oldName)) {
-          return current.map((item) =>
-            item === editedHealthConsideration.oldName
+    if (!editedHealthConsideration) {
+      return;
+    }
+
+    const nextHealthConsiderations =
+      healthConsiderations.includes(
+        editedHealthConsideration.oldName
+      )
+        ? healthConsiderations.map((item) =>
+            item ===
+            editedHealthConsideration.oldName
               ? editedHealthConsideration.newName
               : item
-          );
-        }
+          )
+        : [
+            ...healthConsiderations,
+            editedHealthConsideration.newName,
+          ];
 
-        return [
-          ...current,
-          editedHealthConsideration.newName,
-        ];
-      });
-
-      setSelectedHealth((current) => {
-        if (current.includes(editedHealthConsideration.oldName)) {
-          return current.map((item) =>
-            item === editedHealthConsideration.oldName
+    const nextSelectedHealth =
+      selectedHealth.includes(
+        editedHealthConsideration.oldName
+      )
+        ? selectedHealth.map((item) =>
+            item ===
+            editedHealthConsideration.oldName
               ? editedHealthConsideration.newName
               : item
-          );
-        }
-
-        return current.includes(
-          editedHealthConsideration.newName
-        )
-          ? current
+          )
+        : selectedHealth.includes(
+              editedHealthConsideration.newName
+            )
+          ? selectedHealth
           : [
-              ...current,
+              ...selectedHealth,
               editedHealthConsideration.newName,
             ];
-      });
 
-      navigation.setParams({
-        editedHealthConsideration: undefined,
-      });
-    }
-  }, [route.params?.editedHealthConsideration]);
+    setHealthConsiderations(
+      nextHealthConsiderations
+    );
+    setSelectedHealth(
+      nextSelectedHealth
+    );
+
+    navigation.setParams({
+      editedHealthConsideration:
+        undefined,
+    });
+
+    persistUserData(
+      profiles,
+      nextHealthConsiderations,
+      selectedProfiles,
+      nextSelectedHealth
+    );
+  }, [
+    isUserDataLoaded,
+    route.params?.editedHealthConsideration,
+  ]);
 
   function toggleProfile(profile: string) {
-    setSelectedProfiles((current) =>
-      current.includes(profile)
-        ? current.filter((item) => item !== profile)
-        : [...current, profile]
+    if (!isUserDataLoaded) {
+      return;
+    }
+
+    const nextSelectedProfiles =
+      selectedProfiles.includes(profile)
+        ? selectedProfiles.filter(
+            (item) => item !== profile
+          )
+        : [
+            ...selectedProfiles,
+            profile,
+          ];
+
+    setSelectedProfiles(
+      nextSelectedProfiles
+    );
+
+    persistUserData(
+      profiles,
+      healthConsiderations,
+      nextSelectedProfiles,
+      selectedHealth
     );
   }
 
-  function toggleHealth(consideration: string) {
-    setSelectedHealth((current) =>
-      current.includes(consideration)
-        ? current.filter((item) => item !== consideration)
-        : [...current, consideration]
+  function toggleHealth(
+    consideration: string
+  ) {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
+    const nextSelectedHealth =
+      selectedHealth.includes(
+        consideration
+      )
+        ? selectedHealth.filter(
+            (item) =>
+              item !== consideration
+          )
+        : [
+            ...selectedHealth,
+            consideration,
+          ];
+
+    setSelectedHealth(
+      nextSelectedHealth
+    );
+
+    persistUserData(
+      profiles,
+      healthConsiderations,
+      selectedProfiles,
+      nextSelectedHealth
     );
   }
 
-  function deleteProfile(profile: string) {
-    setProfiles((current) =>
-      current.filter((item) => item !== profile)
+  function deleteProfile(
+    profile: string
+  ) {
+    if (!isUserDataLoaded) {
+      return;
+    }
+
+    const nextProfiles =
+      profiles.filter(
+        (item) => item !== profile
+      );
+
+    const nextSelectedProfiles =
+      selectedProfiles.filter(
+        (item) => item !== profile
+      );
+
+    setProfiles(nextProfiles);
+    setSelectedProfiles(
+      nextSelectedProfiles
     );
 
-    setSelectedProfiles((current) =>
-      current.filter((item) => item !== profile)
+    persistUserData(
+      nextProfiles,
+      healthConsiderations,
+      nextSelectedProfiles,
+      selectedHealth
     );
   }
 
-  function editProfile(profile: string) {
+  function editProfile(
+    profile: string
+  ) {
     navigation.navigate("AddProfile", {
       profile,
     });
@@ -245,24 +492,49 @@ export default function HomeScreen() {
   function deleteHealthConsideration(
     consideration: string
   ) {
-    setHealthConsiderations((current) =>
-      current.filter((item) => item !== consideration)
+    if (!isUserDataLoaded) {
+      return;
+    }
+
+    const nextHealthConsiderations =
+      healthConsiderations.filter(
+        (item) => item !== consideration
+      );
+
+    const nextSelectedHealth =
+      selectedHealth.filter(
+        (item) => item !== consideration
+      );
+
+    setHealthConsiderations(
+      nextHealthConsiderations
+    );
+    setSelectedHealth(
+      nextSelectedHealth
     );
 
-    setSelectedHealth((current) =>
-      current.filter((item) => item !== consideration)
+    persistUserData(
+      profiles,
+      nextHealthConsiderations,
+      selectedProfiles,
+      nextSelectedHealth
     );
   }
 
   function editHealthConsideration(
     consideration: string
   ) {
-    navigation.navigate("AddHealthConsideration", {
-      consideration,
-    });
+    navigation.navigate(
+      "AddHealthConsideration",
+      {
+        consideration,
+      }
+    );
   }
 
-  async function processImage(uri: string) {
+  async function processImage(
+    uri: string
+  ) {
     setIsProcessing(true);
 
     try {
@@ -270,14 +542,16 @@ export default function HomeScreen() {
         await ReviewService.review({
           imageUri: uri,
           people: selectedProfiles,
-          healthConsiderations: selectedHealth,
+          healthConsiderations:
+            selectedHealth,
         });
 
       navigation.navigate("Result", {
         verdict: review.verdict,
         summary: review.summary,
         profiles: selectedProfiles,
-        healthConsiderations: selectedHealth,
+        healthConsiderations:
+          selectedHealth,
       });
     } catch (error) {
       console.error(
@@ -351,13 +625,21 @@ export default function HomeScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView
+      style={styles.container}
+    >
       <ScrollView
         style={styles.scrollView}
-        contentContainerStyle={styles.content}
-        showsVerticalScrollIndicator={false}
+        contentContainerStyle={
+          styles.content
+        }
+        showsVerticalScrollIndicator={
+          false
+        }
       >
-        <Text style={styles.brand}>ShopWise</Text>
+        <Text style={styles.brand}>
+          ShopWise
+        </Text>
 
         <Text style={styles.subtitle}>
           Your AI shopping assistant
@@ -368,17 +650,27 @@ export default function HomeScreen() {
           title="Choose profiles"
         />
 
-        <Text style={styles.sectionDescription}>
+        <Text
+          style={
+            styles.sectionDescription
+          }
+        >
           Select who you're shopping for.
         </Text>
 
-        <View style={styles.chipContainer}>
+        <View
+          style={styles.chipContainer}
+        >
           {profiles.map((profile) => (
             <SelectionChip
               key={profile}
               title={profile}
-              selected={selectedProfiles.includes(profile)}
-              onPress={() => toggleProfile(profile)}
+              selected={selectedProfiles.includes(
+                profile
+              )}
+              onPress={() =>
+                toggleProfile(profile)
+              }
               onLongPress={() => {
                 Alert.alert(
                   profile,
@@ -387,7 +679,9 @@ export default function HomeScreen() {
                     {
                       text: "Edit",
                       onPress: () => {
-                        editProfile(profile);
+                        editProfile(
+                          profile
+                        );
                       },
                     },
                     {
@@ -398,7 +692,9 @@ export default function HomeScreen() {
                       text: "Delete",
                       style: "destructive",
                       onPress: () => {
-                        deleteProfile(profile);
+                        deleteProfile(
+                          profile
+                        );
                       },
                     },
                   ]
@@ -410,7 +706,10 @@ export default function HomeScreen() {
           <SelectionChip
             title="+ Add"
             onPress={() =>
-              navigation.navigate("AddProfile", {})
+              navigation.navigate(
+                "AddProfile",
+                {}
+              )
             }
           />
         </View>
@@ -420,44 +719,60 @@ export default function HomeScreen() {
           title="Health considerations"
         />
 
-        <Text style={styles.sectionDescription}>
+        <Text
+          style={
+            styles.sectionDescription
+          }
+        >
           Select any that apply.
         </Text>
 
-        <View style={styles.chipContainer}>
-          {healthConsiderations.map((item) => (
-            <SelectionChip
-              key={item}
-              title={item}
-              selected={selectedHealth.includes(item)}
-              onPress={() => toggleHealth(item)}
-              onLongPress={() => {
-                Alert.alert(
-                  item,
-                  "What would you like to do?",
-                  [
-                    {
-                      text: "Edit",
-                      onPress: () => {
-                        editHealthConsideration(item);
+        <View
+          style={styles.chipContainer}
+        >
+          {healthConsiderations.map(
+            (item) => (
+              <SelectionChip
+                key={item}
+                title={item}
+                selected={selectedHealth.includes(
+                  item
+                )}
+                onPress={() =>
+                  toggleHealth(item)
+                }
+                onLongPress={() => {
+                  Alert.alert(
+                    item,
+                    "What would you like to do?",
+                    [
+                      {
+                        text: "Edit",
+                        onPress: () => {
+                          editHealthConsideration(
+                            item
+                          );
+                        },
                       },
-                    },
-                    {
-                      text: "Cancel",
-                      style: "cancel",
-                    },
-                    {
-                      text: "Delete",
-                      style: "destructive",
-                      onPress: () => {
-                        deleteHealthConsideration(item);
+                      {
+                        text: "Cancel",
+                        style: "cancel",
                       },
-                    },
-                  ]
-                );
-              }}
-            />
-          ))}
+                      {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: () => {
+                          deleteHealthConsideration(
+                            item
+                          );
+                        },
+                      },
+                    ]
+                  );
+                }}
+              />
+            )
+          )}
 
           <SelectionChip
             title="+ Add"
@@ -475,8 +790,12 @@ export default function HomeScreen() {
           description="Take a clear photo of the ingredient list or choose one from your gallery."
           primaryTitle="📷 Take Photo"
           secondaryTitle="🖼️ Choose From Gallery"
-          onPrimaryPress={handleTakePhoto}
-          onSecondaryPress={handleChooseFromGallery}
+          onPrimaryPress={
+            handleTakePhoto
+          }
+          onSecondaryPress={
+            handleChooseFromGallery
+          }
         />
       </ScrollView>
 
@@ -492,7 +811,8 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background,
+    backgroundColor:
+      Colors.background,
   },
 
   scrollView: {
@@ -507,7 +827,8 @@ const styles = StyleSheet.create({
   brand: {
     marginTop: Spacing.lg,
     fontSize: Typography.title,
-    fontWeight: Typography.weightBold,
+    fontWeight:
+      Typography.weightBold,
     color: Colors.textPrimary,
   },
 
