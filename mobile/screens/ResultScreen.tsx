@@ -41,35 +41,42 @@ export default function ResultScreen() {
   const isRecommended =
     verdict === "RECOMMENDED";
 
-  const isCautious =
+  const isNotRecommended =
     verdict === "NOT RECOMMENDED";
 
   const title = isRecommended
     ? "Looks Good"
-    : isCautious
+    : isNotRecommended
     ? "Be Cautious"
     : "Worth Considering";
 
   const indicator = isRecommended
     ? "🟢"
-    : isCautious
+    : isNotRecommended
     ? "🔴"
     : "🟠";
 
   const titleColor = isRecommended
     ? Colors.success
-    : isCautious
+    : isNotRecommended
     ? Colors.danger
     : Colors.warning;
 
-  const whyText = summary
-    .map((item) => `• ${item}`)
-    .join("\n\n");
+  const contextText =
+    "Based on the information we could read from the product image.";
 
   async function handleShare() {
     try {
+      const shareMessage = [
+        `ShopWise — ${title}`,
+        "",
+        "Why?",
+        "",
+        ...summary.map((item) => `• ${item}`),
+      ].join("\n");
+
       await Share.share({
-        message: `ShopWise — Why?\n\n${whyText}`,
+        message: shareMessage,
       });
     } catch (error) {
       Alert.alert(
@@ -109,7 +116,7 @@ export default function ResultScreen() {
           </Text>
 
           <Text style={styles.context}>
-            Based on your considerations, if any
+            {contextText}
           </Text>
 
           <View style={styles.divider} />
@@ -118,9 +125,36 @@ export default function ResultScreen() {
             Why?
           </Text>
 
-          <Text style={styles.why}>
-            {whyText}
-          </Text>
+          <View style={styles.reasonList}>
+            {summary.length > 0 ? (
+              summary.map((item, index) => (
+                <View
+                  key={`${item}-${index}`}
+                  style={styles.reasonRow}
+                >
+                  <Text
+                    style={[
+                      styles.reasonBullet,
+                      {
+                        color: titleColor,
+                      },
+                    ]}
+                  >
+                    •
+                  </Text>
+
+                  <Text style={styles.reasonText}>
+                    {item}
+                  </Text>
+                </View>
+              ))
+            ) : (
+              <Text style={styles.reasonText}>
+                ShopWise could not provide a detailed
+                explanation for this result.
+              </Text>
+            )}
+          </View>
 
           <Pressable
             style={[
@@ -194,10 +228,27 @@ const styles = StyleSheet.create({
     fontSize: Typography.subheading,
     fontWeight: Typography.weightBold,
     color: Colors.textPrimary,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
   },
 
-  why: {
+  reasonList: {
+    gap: Spacing.md,
+  },
+
+  reasonRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+  },
+
+  reasonBullet: {
+    width: 20,
+    fontSize: Typography.body,
+    fontWeight: Typography.weightBold,
+    lineHeight: 24,
+  },
+
+  reasonText: {
+    flex: 1,
     fontSize: Typography.body,
     lineHeight: 24,
     color: Colors.textSecondary,
