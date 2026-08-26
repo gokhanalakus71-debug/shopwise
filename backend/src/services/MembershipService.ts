@@ -1,71 +1,28 @@
-import { Firestore } from "firebase-admin/firestore";
+import RevenueCatService from "./RevenueCatService.js";
 
 const FREE_REVIEW_LIMIT = 5;
 
 class MembershipService {
-  constructor(private readonly db: Firestore) {}
-
-  async getMembership(uid: string) {
-    const ref = this.db.collection("users").doc(uid);
-    const snapshot = await ref.get();
-
-    const data = snapshot.exists
-      ? snapshot.data()
-      : undefined;
-
-    return {
-      plan: data?.membership?.plan || "free",
-      reviewCount:
-        data?.usage?.reviewCount || 0,
-    };
+  async isPremium(uid: string): Promise<boolean> {
+    return RevenueCatService.isPremium(uid);
   }
 
   async canReview(uid: string): Promise<boolean> {
-    const membership = await this.getMembership(uid);
+    const premium = await this.isPremium(uid);
 
-    if (membership.plan === "premium") {
+    if (premium) {
       return true;
     }
 
-    return membership.reviewCount < FREE_REVIEW_LIMIT;
+    // Free-review usage is stored separately.
+    // The review route will enforce the limit atomically.
+    return true;
   }
 
   async recordReview(uid: string): Promise<void> {
-    const ref = this.db.collection("users").doc(uid);
-
-    await this.db.runTransaction(async (transaction) => {
-      const snapshot = await transaction.get(ref);
-
-      const data = snapshot.exists
-        ? snapshot.data()
-        : undefined;
-
-      const plan =
-        data?.membership?.plan || "free";
-
-      const reviewCount =
-        data?.usage?.reviewCount || 0;
-
-      if (
-        plan !== "premium" &&
-        reviewCount >= FREE_REVIEW_LIMIT
-      ) {
-        throw new Error(
-          "FREE_REVIEW_LIMIT_REACHED"
-        );
-      }
-
-      transaction.set(
-        ref,
-        {
-          usage: {
-            reviewCount: reviewCount + 1,
-          },
-        },
-        { merge: true }
-      );
-    });
+    // Temporary implementation removed from here.
+    // Review usage will be handled by the usage service.
   }
 }
 
-export default MembershipService;
+export default new MembershipService();
