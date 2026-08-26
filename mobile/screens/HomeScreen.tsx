@@ -554,11 +554,6 @@ export default function HomeScreen() {
           selectedHealth,
       });
     } catch (error) {
-      console.error(
-        "Product review error:",
-        error
-      );
-
       if (
         error instanceof Error &&
         error.name === "FREE_REVIEW_LIMIT_REACHED"
@@ -568,6 +563,11 @@ export default function HomeScreen() {
         );
         return;
       }
+
+      console.error(
+        "Product review error:",
+        error
+      );
 
       Alert.alert(
         "Something Went Wrong",
