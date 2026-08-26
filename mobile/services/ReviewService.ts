@@ -45,11 +45,23 @@ class ReviewService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => null);
+      const errorData =
+        await response.json().catch(() => null);
 
-      throw new Error(
-        errorData?.error || "Review request failed."
+      const error = new Error(
+        errorData?.message ||
+          errorData?.error ||
+          "Review request failed."
       );
+
+      if (
+        errorData?.error ===
+        "FREE_REVIEW_LIMIT_REACHED"
+      ) {
+        error.name = "FREE_REVIEW_LIMIT_REACHED";
+      }
+
+      throw error;
     }
 
     const data = await response.json();
