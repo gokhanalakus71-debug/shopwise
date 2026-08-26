@@ -1,4 +1,5 @@
 import { File } from "expo-file-system";
+import AuthService from "./AuthService";
 
 const API_URL = "http://10.0.2.2:3000";
 
@@ -17,6 +18,14 @@ class ReviewService {
   async review(
     request: ReviewRequest
   ): Promise<ReviewResponse> {
+    const user = AuthService.getCurrentUser();
+
+    if (!user) {
+      throw new Error("You must be logged in to review a product.");
+    }
+
+    const idToken = await user.getIdToken();
+
     const file = new File(request.imageUri);
     const imageBase64 = await file.base64();
 
@@ -24,6 +33,7 @@ class ReviewService {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${idToken}`,
       },
       body: JSON.stringify({
         imageBase64,
@@ -35,7 +45,11 @@ class ReviewService {
     });
 
     if (!response.ok) {
-      throw new Error("Review request failed.");
+      const errorData = await response.json().catch(() => null);
+
+      throw new Error(
+        errorData?.error || "Review request failed."
+      );
     }
 
     const data = await response.json();
