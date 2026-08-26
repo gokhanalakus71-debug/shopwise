@@ -7,10 +7,7 @@ import { Platform } from "react-native";
 const ENTITLEMENT_ID = "shopwise_premium";
 
 export async function initializeSubscriptions(): Promise<void> {
-  const apiKey =
-    Platform.OS === "ios"
-      ? process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY
-      : process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY;
+  const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_TEST_KEY;
 
   if (!apiKey) {
     console.warn("RevenueCat API key is not configured.");
