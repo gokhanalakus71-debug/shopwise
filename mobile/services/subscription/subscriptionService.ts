@@ -19,6 +19,13 @@ export async function initializeSubscriptions(): Promise<void> {
   });
 }
 
+export async function identifyRevenueCatUser(
+  uid: string
+): Promise<CustomerInfo> {
+  const result = await Purchases.logIn(uid);
+  return result.customerInfo;
+}
+
 export async function getOfferings(): Promise<PurchasesOffering | null> {
   const offerings = await Purchases.getOfferings();
   return offerings.current ?? null;

@@ -13,6 +13,7 @@ import AppTextInput from "../components/AppTextInput";
 import PasswordInput from "../components/PasswordInput";
 import PrimaryButton from "../components/PrimaryButton";
 import AuthService from "../services/AuthService";
+import { identifyRevenueCatUser } from "../services/subscription/subscriptionService";
 
 import { useNavigation } from "@react-navigation/native";
 import { AppNavigation } from "../navigation/AppNavigator";
@@ -38,9 +39,14 @@ export default function LoginScreen() {
     setIsLoading(true);
 
     try {
-      await AuthService.login(
-        trimmedEmail,
-        password
+      const credential =
+        await AuthService.login(
+          trimmedEmail,
+          password
+        );
+
+      await identifyRevenueCatUser(
+        credential.user.uid
       );
 
       navigation.navigate("Home");
