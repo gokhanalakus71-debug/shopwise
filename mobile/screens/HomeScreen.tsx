@@ -786,6 +786,16 @@ export default function HomeScreen() {
         </View>
 
         <ActionCard
+          title="ShopWise Premium"
+          description="Unlock Premium access and get more from ShopWise."
+          primaryTitle="⭐ View Premium"
+          secondaryTitle=""
+          onPrimaryPress={() =>
+            navigation.navigate("Premium")
+          }
+          onSecondaryPress={() => {}}
+        />
+        <ActionCard
           title="Review Product"
           description="Take a clear photo of the ingredient list or choose one from your gallery."
           primaryTitle="📷 Take Photo"
