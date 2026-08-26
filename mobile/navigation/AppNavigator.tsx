@@ -11,6 +11,7 @@ import HomeScreen from "../screens/HomeScreen";
 import ResultScreen from "../screens/ResultScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
 import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
+import PremiumScreen from "../screens/PremiumScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -48,6 +49,8 @@ export type RootStackParamList = {
   AddHealthConsideration: {
     consideration?: string;
   };
+
+  Premium: undefined;
 };
 
 const Stack =
@@ -95,6 +98,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="AddHealthConsideration"
           component={AddHealthConsiderationScreen}
+        />
+
+        <Stack.Screen
+          name="Premium"
+          component={PremiumScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
