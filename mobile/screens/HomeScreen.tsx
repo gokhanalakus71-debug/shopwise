@@ -559,6 +559,14 @@ export default function HomeScreen() {
         error
       );
 
+      if (
+        error instanceof Error &&
+        error.name === "FREE_REVIEW_LIMIT_REACHED"
+      ) {
+        navigation.navigate("Premium");
+        return;
+      }
+
       Alert.alert(
         "Something Went Wrong",
         "We couldn't review this product. Please try again."
