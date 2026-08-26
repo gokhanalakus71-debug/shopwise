@@ -563,7 +563,9 @@ export default function HomeScreen() {
         error instanceof Error &&
         error.name === "FREE_REVIEW_LIMIT_REACHED"
       ) {
-        navigation.navigate("Premium");
+        navigation.navigate(
+          "FreeReviewLimit"
+        );
         return;
       }
 

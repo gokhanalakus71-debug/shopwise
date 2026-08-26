@@ -12,6 +12,7 @@ import ResultScreen from "../screens/ResultScreen";
 import AddProfileScreen from "../screens/AddProfileScreen";
 import AddHealthConsiderationScreen from "../screens/AddHealthConsiderationScreen";
 import PremiumScreen from "../screens/PremiumScreen";
+import FreeReviewLimitScreen from "../screens/FreeReviewLimitScreen";
 
 export type RootStackParamList = {
   Welcome: undefined;
@@ -51,6 +52,8 @@ export type RootStackParamList = {
   };
 
   Premium: undefined;
+
+  FreeReviewLimit: undefined;
 };
 
 const Stack =
@@ -103,6 +106,11 @@ export default function AppNavigator() {
         <Stack.Screen
           name="Premium"
           component={PremiumScreen}
+        />
+
+        <Stack.Screen
+          name="FreeReviewLimit"
+          component={FreeReviewLimitScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
