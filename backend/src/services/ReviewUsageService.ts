@@ -16,31 +16,24 @@ class ReviewUsageService {
     return Number(data?.usage?.reviewCount || 0);
   }
 
-  async canUseFreeReview(
-    uid: string
-  ): Promise<boolean> {
-    const count =
-      await this.getReviewCount(uid);
-
-    return count < FREE_REVIEW_LIMIT;
-  }
-
-  async recordReview(uid: string): Promise<void> {
+  async consumeFreeReview(uid: string): Promise<boolean> {
     const ref = firestore.collection("users").doc(uid);
 
-    await firestore.runTransaction(
+    return firestore.runTransaction(
       async (transaction) => {
-        const snapshot =
-          await transaction.get(ref);
+        const snapshot = await transaction.get(ref);
 
         const data = snapshot.exists
           ? snapshot.data()
           : undefined;
 
-        const count =
-          Number(
-            data?.usage?.reviewCount || 0
-          );
+        const count = Number(
+          data?.usage?.reviewCount || 0
+        );
+
+        if (count >= FREE_REVIEW_LIMIT) {
+          return false;
+        }
 
         transaction.set(
           ref,
@@ -51,6 +44,8 @@ class ReviewUsageService {
           },
           { merge: true }
         );
+
+        return true;
       }
     );
   }

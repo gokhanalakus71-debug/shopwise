@@ -30,12 +30,12 @@ router.post(
         await MembershipService.isPremium(uid);
 
       if (!premium) {
-        const canUseFreeReview =
-          await ReviewUsageService.canUseFreeReview(
+        const consumed =
+          await ReviewUsageService.consumeFreeReview(
             uid
           );
 
-        if (!canUseFreeReview) {
+        if (!consumed) {
           return res.status(403).json({
             error:
               "FREE_REVIEW_LIMIT_REACHED",
@@ -73,12 +73,6 @@ router.post(
               ? healthConsiderations
               : [],
         });
-
-      if (!premium) {
-        await ReviewUsageService.recordReview(
-          uid
-        );
-      }
 
       res.json(result);
     } catch (error) {
