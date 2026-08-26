@@ -55,15 +55,15 @@ const styles = StyleSheet.create({
     position: "absolute",
     left: "16%",
     right: "16%",
-    top: "75.5%",
-    height: "6.5%",
+    top: "70.5%",
+    height: "7.5%",
   },
 
   laterButton: {
     position: "absolute",
     left: "16%",
     right: "16%",
-    top: "82.5%",
-    height: "6.5%",
+    top: "77.5%",
+    height: "7.5%",
   },
 });
