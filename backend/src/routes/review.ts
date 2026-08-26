@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import ReviewService from "../services/ReviewService.js";
 import MembershipService from "../services/MembershipService.js";
+import ReviewUsageService from "../services/ReviewUsageService.js";
 import {
   AuthenticatedRequest,
   requireAuth,
@@ -25,15 +26,23 @@ router.post(
         });
       }
 
-      const canReview =
-        await MembershipService.canReview(uid);
+      const premium =
+        await MembershipService.isPremium(uid);
 
-      if (!canReview) {
-        return res.status(403).json({
-          error: "FREE_REVIEW_LIMIT_REACHED",
-          message:
-            "You've used your 5 free product reviews. Upgrade to ShopWise Premium to continue.",
-        });
+      if (!premium) {
+        const canUseFreeReview =
+          await ReviewUsageService.canUseFreeReview(
+            uid
+          );
+
+        if (!canUseFreeReview) {
+          return res.status(403).json({
+            error:
+              "FREE_REVIEW_LIMIT_REACHED",
+            message:
+              "You've used your 5 free product reviews. Upgrade to ShopWise Premium to continue.",
+          });
+        }
       }
 
       const {
@@ -52,17 +61,24 @@ router.post(
       const result =
         await ReviewService.reviewImage({
           imageBase64,
-          mimeType: mimeType || "image/jpeg",
+          mimeType:
+            mimeType || "image/jpeg",
           people: Array.isArray(people)
             ? people
             : [],
           healthConsiderations:
-            Array.isArray(healthConsiderations)
+            Array.isArray(
+              healthConsiderations
+            )
               ? healthConsiderations
               : [],
         });
 
-      await MembershipService.recordReview(uid);
+      if (!premium) {
+        await ReviewUsageService.recordReview(
+          uid
+        );
+      }
 
       res.json(result);
     } catch (error) {
