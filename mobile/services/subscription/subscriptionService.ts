@@ -4,7 +4,7 @@ import Purchases, {
 } from "react-native-purchases";
 import { Platform } from "react-native";
 
-const ENTITLEMENT_ID = "premium";
+const ENTITLEMENT_ID = "shopwise_premium";
 
 export async function initializeSubscriptions(): Promise<void> {
   const apiKey =
